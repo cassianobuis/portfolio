@@ -1,1 +1,663 @@
-<h1>Que incrivel meu portifolio 😎</h1>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Portfólio · Modo Jogo · Java Dev</title>
+    <!-- Fontes & Ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 30%, #0b0e1e, #030514);
+            font-family: 'Quicksand', sans-serif;
+            color: #e3f2fd;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" viewBox="0 0 24 30"><polygon points="2,2 20,2 22,12 12,28 2,12" fill="%23ffcc00" stroke="%23aa8800" stroke-width="1.5"/></svg>') 12 5, auto;
+        }
+
+        /* efeito scanline CRT sutil */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: repeating-linear-gradient(0deg, rgba(0,255,0,0.02) 0px, rgba(0,0,0,0.2) 2px, transparent 3px);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.2;
+        }
+
+        /* partículas mágicas (JS vai controlar) */
+        #magic-particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 20, 30, 0.6);
+            backdrop-filter: blur(4px);
+            border: 3px solid #5f4bb6;
+            border-radius: 40px 40px 30px 30px;
+            box-shadow: 0 0 30px #6a4ec7, inset 0 0 15px #2a1e5e;
+            padding: 2rem 2.5rem;
+        }
+
+        /* Efeito de moldura de jogo */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border: 2px solid #aa8cff;
+            border-radius: 45px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* ===== Cabeçalho ===== */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px dashed #9370db;
+            padding-bottom: 1.2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar-pixel {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #392f6b, #1e173b);
+            border-radius: 30px 10px 30px 10px;
+            border: 3px solid #f0e68c;
+            box-shadow: 0 0 0 3px #3b2758;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+            100% { transform: translateY(0px); }
+        }
+
+        .name-badge h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: #ffd966;
+            text-shadow: 4px 4px 0 #5a3d8c;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .level {
+            background: #1e2a3a;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 2px solid #9b7ef0;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 0.9rem;
+            color: #b0e0ff;
+        }
+
+        .hp-bar {
+            background: #332c45;
+            height: 16px;
+            width: 200px;
+            border-radius: 20px;
+            border: 2px solid #b886ff;
+            overflow: hidden;
+        }
+
+        .hp-fill {
+            width: 88%;
+            height: 100%;
+            background: linear-gradient(90deg, #f07c7c, #ec5252, #b02b2b);
+            box-shadow: 0 0 8px #ff4444;
+            border-radius: 20px;
+            animation: pulse-hp 2s infinite;
+        }
+
+        @keyframes pulse-hp {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; box-shadow: 0 0 15px #ff8888; }
+        }
+
+        .mana-bar {
+            margin-top: 5px;
+            background: #262a4a;
+            height: 8px;
+            width: 200px;
+            border-radius: 20px;
+            border: 1px solid #5f9ea0;
+        }
+
+        .mana-fill {
+            width: 72%;
+            height: 100%;
+            background: linear-gradient(90deg, #42c5f0, #2f74c0);
+            border-radius: 20px;
+        }
+
+        /* === Cards de skill (Java) === */
+        .skills-panel {
+            background: rgba(0, 10, 20, 0.7);
+            border: 3px solid #4b3b8c;
+            border-radius: 50px 50px 30px 30px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: inset 0 0 30px #1d1930, 0 15px 30px black;
+        }
+
+        .skills-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #f7d970;
+            text-align: center;
+            text-shadow: 3px 3px 0 #2e1b5c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-card {
+            background: #17212b;
+            border-radius: 30px 10px 30px 10px;
+            border: 2px solid #b594ff;
+            padding: 1.5rem 1.2rem;
+            transition: all 0.2s ease;
+            box-shadow: 8px 8px 0 #251e3a;
+            display: flex;
+            flex-direction: column;
+            animation: card-enter 0.8s backwards;
+            cursor: pointer;
+        }
+
+        .skill-card:nth-child(1) { animation-delay: 0.1s; }
+        .skill-card:nth-child(2) { animation-delay: 0.3s; }
+        .skill-card:nth-child(3) { animation-delay: 0.5s; }
+        .skill-card:nth-child(4) { animation-delay: 0.7s; }
+
+        @keyframes card-enter {
+            0% { opacity: 0; transform: translateY(40px) rotate(-2deg); }
+            100% { opacity: 1; transform: translateY(0) rotate(0); }
+        }
+
+        .skill-card:hover {
+            transform: scale(1.02) translateY(-6px);
+            border-color: #ffb66c;
+            box-shadow: 12px 12px 0 #4b328a, 0 0 25px #a673ff;
+        }
+
+        .skill-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 6px gold);
+        }
+
+        .skill-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #e3b3ff;
+            margin: 10px 0 8px;
+        }
+
+        .skill-level {
+            background: #191e2c;
+            border-radius: 20px;
+            height: 12px;
+            width: 100%;
+            border: 1px solid #9980cc;
+            margin: 15px 0 5px;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #f9c15d, #fd9a2e);
+            width: 90%;
+            border-radius: 20px;
+            animation: glow 1.5s infinite alternate;
+        }
+        .skill-progress.java-core { width: 95%; }
+        .skill-progress.spring { width: 88%; }
+        .skill-progress.jakarta { width: 80%; }
+        .skill-progress.javafx { width: 75%; }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #ffae42; }
+            to { box-shadow: 0 0 15px #ffd966; }
+        }
+
+        .skill-desc {
+            font-size: 0.9rem;
+            color: #b5c9e0;
+        }
+
+        /* === Vitrine de Projetos (espaço especial) === */
+        .projects-armory {
+            background: #0c1120e0;
+            border: 4px ridge #8a6de9;
+            border-radius: 70px 20px 70px 20px;
+            padding: 2rem 1.5rem;
+            margin: 2.5rem 0;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 0 50px #3f3182, inset 0 0 20px #17153b;
+        }
+
+        .projects-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.6rem;
+            color: #eecb7b;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 3px 3px 0 #352a60;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .project-item {
+            background: #1b2335;
+            border: 3px solid #aa7bc7;
+            border-radius: 30px 5px 30px 5px;
+            padding: 1.5rem 1rem;
+            transition: 0.25s;
+            transform-style: preserve-3d;
+            animation: shine 4s infinite;
+            cursor: pointer;
+        }
+
+        .project-item:hover {
+            background: #252e49;
+            border-color: #f8c291;
+            transform: rotate(0.5deg) scale(1.02);
+            box-shadow: 0 0 30px #9d86e0;
+        }
+
+        .project-icon {
+            font-size: 2.5rem;
+            background: #170f2e;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px 5px 20px 5px;
+            border: 2px solid #ffd966;
+        }
+
+        .project-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            margin: 15px 0 8px;
+            color: #f7dc9b;
+        }
+
+        .project-tech {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .tech-tag {
+            background: #281f48;
+            border: 1px solid #b588ff;
+            border-radius: 30px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #e8d1ff;
+        }
+
+        .btn-demo {
+            background: #3d2e62;
+            border: none;
+            border-bottom: 5px solid #1e1435;
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: bold;
+            padding: 0.6rem 1rem;
+            border-radius: 25px 5px 25px 5px;
+            margin-top: 1.2rem;
+            width: fit-content;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-demo:hover {
+            background: #5f44a0;
+            border-bottom-width: 2px;
+            transform: translateY(3px);
+        }
+
+        /* inventário / footer */
+        .inventory {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 30px;
+            background: #030a14b3;
+            border-radius: 50px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 2px solid #7f65c7;
+        }
+
+        .coin {
+            color: #ffd966;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .glow-text {
+            animation: textflick 2s infinite;
+        }
+
+        @keyframes textflick {
+            0% { text-shadow: 0 0 3px cyan; }
+            50% { text-shadow: 0 0 10px violet; }
+        }
+
+        /* Partículas custom (JS) */
+        .particle {
+            position: absolute;
+            background: #ffcbf2;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* responsividade */
+        @media (max-width: 680px) {
+            .container { padding: 1rem; }
+            .name-badge h1 { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="magic-particles"></div>
+
+    <main class="container">
+        <!-- header como painel de status -->
+        <header class="game-header">
+            <div class="player-info">
+                <div class="avatar-pixel">
+                    <i class="fas fa-coffee" style="color:#e3b3ff;"></i>
+                </div>
+                <div class="name-badge">
+                    <h1>JAVA <span style="color:#ccf;">WIZARD</span></h1>
+                    <span class="level"><i class="fas fa-crown" style="color:gold;"></i> LV. 18 / JAVAMANCER</span>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="hp-bar"><div class="hp-fill"></div></div>
+                <div class="mana-bar"><div class="mana-fill"></div></div>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <span><i class="fas fa-shield-alt"></i> 42</span>
+                    <span><i class="fas fa-magic"></i> 78</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- SEÇÃO DESTAQUE: HABILIDADES JAVA (como skills de jogo) -->
+        <section class="skills-panel">
+            <div class="skills-title">
+                <i class="fas fa-cog fa-spin"></i>  JAVA MASTERY  <i class="fas fa-cog fa-spin"></i>
+            </div>
+            <div class="skill-grid">
+                <!-- skill 1 -->
+                <div class="skill-card" onclick="showSkillMsg('Java Core')">
+                    <div class="skill-icon">☕</div>
+                    <div class="skill-name">JAVA CORE</div>
+                    <div class="skill-level"><div class="skill-progress java-core"></div></div>
+                    <span class="skill-desc">Threads, Generics, JVM, Streams API</span>
+                </div>
+                <!-- skill 2 -->
+                <div class="skill-card" onclick="showSkillMsg('Spring Framework')">
+                    <div class="skill-icon">🍃</div>
+                    <div class="skill-name">SPRING BOOT</div>
+                    <div class="skill-level"><div class="skill-progress spring"></div></div>
+                    <span class="skill-desc">WebFlux, Security, Data JPA, Cloud</span>
+                </div>
+                <!-- skill 3 -->
+                <div class="skill-card" onclick="showSkillMsg('Jakarta EE')">
+                    <div class="skill-icon">🌍</div>
+                    <div class="skill-name">JAKARTA EE</div>
+                    <div class="skill-level"><div class="skill-progress jakarta"></div></div>
+                    <span class="skill-desc">Servlets, CDI, EJB, MicroProfile</span>
+                </div>
+                <!-- skill 4 -->
+                <div class="skill-card" onclick="showSkillMsg('JavaFX / UI')">
+                    <div class="skill-icon">🖥️</div>
+                    <div class="skill-name">JAVAFX & SWING</div>
+                    <div class="skill-level"><div class="skill-progress javafx"></div></div>
+                    <span class="skill-desc">Interfaces ricas, FXML, gráficos 2D</span>
+                </div>
+            </div>
+            <p style="margin-top: 20px; text-align:center; font-style:italic; opacity:0.9;">✦ clique em qualquer skill para ativar ✦</p>
+        </section>
+
+        <!-- ESPAÇO PARA PROJETOS (vitrine) -->
+        <section class="projects-armory">
+            <h2 class="projects-title">📦 ARMÁRIO DE PROJETOS</h2>
+            <div class="project-grid" id="projectList">
+                <!-- projeto 1 -->
+                <div class="project-item">
+                    <span class="project-icon">⚔️</span>
+                    <h3 class="project-name">RPG combat API</h3>
+                    <p style="font-size:0.85rem;">Sistema de batalha em Java 21 + Spring, com padrões Strategy e State.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Java 21</span>
+                        <span class="tech-tag">Spring</span>
+                        <span class="tech-tag">JPA</span>
+                    </div>
+                    <button class="btn-demo" onclick="alert('⚔️ Projeto: RPG Combat (demo interativa em construção)')"><i class="fas fa-play"></i> jogar demo</button>
+                </div>
+                <!-- projeto 2 -->
+                <div class="project-item">
+                    <span class="project-icon">🏰</span>
+                    <h3 class="project-name">Dungeon Builder</h3>
+                    <p>Editor de masmorras com JavaFX e padrão Observer. Exporta JSON.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">JavaFX</span>
+                        <span class="tech-tag">Gson</span>
+                        <span class="tech-tag">MVC</span>
+                    </div>
+                    <button class="btn-demo" onclick="alert('🏰 Dungeon Builder - em breve alpha')"><i class="fas fa-dungeon"></i> construir</button>
+                </div>
+                <!-- projeto 3 -->
+                <div class="project-item">
+                    <span class="project-icon">📜</span>
+                    <h3 class="project-name">QuestLog (microservice)</h3>
+                    <p>Backend de missões com Quarkus, MongoDB e Kafka.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Quarkus</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">Kafka</span>
+                    </div>
+                    <button class="btn-demo" onclick="alert('📜 QuestLog: acesse o swagger (mock)')"><i class="fas fa-scroll"></i> ver docs</button>
+                </div>
+                <!-- projeto 4 (extra espaço) -->
+                <div class="project-item">
+                    <span class="project-icon">🧪</span>
+                    <h3 class="project-name">ByteCraft compiler</h3>
+                    <p>Compilador didático para linguagem simples (Java + Antlr).</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Antlr</span>
+                        <span class="tech-tag">ASM</span>
+                        <span class="tech-tag">Java</span>
+                    </div>
+                    <button class="btn-demo" onclick="alert('🧡 ByteCraft - repositório privado')"><i class="fas fa-flask"></i> experimental</button>
+                </div>
+            </div>
+            <p style="text-align:right; color:#b3a0ff; margin-top:15px;">+ 12 projetos no grimório <i class="fas fa-arrow-right"></i></p>
+        </section>
+
+        <!-- rodapé / itens -->
+        <footer class="inventory">
+            <span class="coin"><i class="fas fa-coins"></i> 2.5k XP</span>
+            <span class="coin"><i class="fas fa-gem"></i> 48 gemas</span>
+            <span class="coin"><i class="fas fa-key"></i> 6 chaves de API</span>
+            <span style="flex:1; text-align:end;" class="glow-text">✦ contato: java.wizard@dungeon.dev ✦</span>
+        </footer>
+    </main>
+
+    <!-- script de animações e partículas -->
+    <script>
+        (function() {
+            // ********** PARTÍCULAS MÁGICAS (fundos animados) **********
+            const particlesContainer = document.getElementById('magic-particles');
+            const numParticles = 45;
+            for (let i = 0; i < numParticles; i++) {
+                let particle = document.createElement('div');
+                particle.className = 'particle';
+                let size = Math.random() * 8 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.background = `hsl(${Math.random() * 60 + 250}, 80%, 70%)`; // roxos/azuis
+                particle.style.boxShadow = `0 0 15px currentColor`;
+                particle.style.animation = `floatParticle ${Math.random() * 15 + 8}s infinite alternate`;
+                particle.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                particle.style.setProperty('--ty', (Math.random() * 200 - 100) + 'px');
+                particlesContainer.appendChild(particle);
+            }
+            // adiciona keyframe custom para cada partícula (via style tag dinâmica)
+            const styleSheet = document.createElement("style");
+            styleSheet.textContent = `
+                @keyframes floatParticle {
+                    0% { transform: translate(0,0) scale(1); opacity: 0.4; }
+                    100% { transform: translate(var(--tx,30px), var(--ty,-30px)) scale(1.3); opacity: 0.9; }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+
+            // ********** PEQUENOS EFEITOS NOS CARDS DE SKILL **********
+            window.showSkillMsg = function(skillName) {
+                // cria notificação flutuante
+                const msg = document.createElement('div');
+                msg.textContent = `⚡ ${skillName} equipado! +10 de inteligência`;
+                msg.style.position = 'fixed';
+                msg.style.bottom = '30px';
+                msg.style.right = '30px';
+                msg.style.background = '#1e2639';
+                msg.style.border = '3px solid #be9eff';
+                msg.style.padding = '1rem 2rem';
+                msg.style.borderRadius = '40px 10px 40px 10px';
+                msg.style.fontFamily = "'Press Start 2P', cursive";
+                msg.style.fontSize = '0.7rem';
+                msg.style.color = '#fade85';
+                msg.style.boxShadow = '0 0 30px purple';
+                msg.style.zIndex = '9999';
+                msg.style.animation = 'slideIn 0.3s, fadeOut 0.5s 1.7s forwards';
+                document.body.appendChild(msg);
+
+                // animações inline
+                const styleAnim = document.createElement('style');
+                styleAnim.textContent = `
+                    @keyframes slideIn { from {right: -300px; opacity:0;} to {right:30px; opacity:1;} }
+                    @keyframes fadeOut { to {opacity:0; transform:scale(0.8);} }
+                `;
+                document.head.appendChild(styleAnim);
+
+                setTimeout(() => { msg.remove(); styleAnim.remove(); }, 2200);
+            };
+
+            // ********** EFEITO DE HOVER NOS PROJETOS (som de jogo imaginário) **********
+            const projItems = document.querySelectorAll('.project-item');
+            projItems.forEach((item, idx) => {
+                item.addEventListener('mouseenter', () => {
+                    item.style.transition = '0.15s';
+                });
+            });
+
+            // ********** animação extra de "glitch" no título **********
+            const titles = document.querySelectorAll('.skills-title, .projects-title');
+            setInterval(() => {
+                titles.forEach(t => {
+                    t.style.textShadow = `3px 3px 0 #${Math.floor(Math.random()*16777215).toString(16)}`;
+                });
+            }, 800);
+            // resetar após 200ms para não poluir
+            setInterval(() => {
+                titles.forEach(t => t.style.textShadow = '3px 3px 0 #2e1b5c'); // volta ao normal
+            }, 1000);
+        })();
+
+        // Mais algumas partículas de movimento no background (clique)
+        document.addEventListener('click', function(e) {
+            for (let i=0;i<5;i++) {
+                let spark = document.createElement('div');
+                spark.className = 'particle';
+                spark.style.position = 'fixed';
+                spark.style.left = e.clientX + 'px';
+                spark.style.top = e.clientY + 'px';
+                spark.style.width = '10px';
+                spark.style.height = '10px';
+                spark.style.background = '#ffd966';
+                spark.style.borderRadius = '50%';
+                spark.style.filter = 'blur(2px)';
+                spark.style.pointerEvents = 'none';
+                spark.style.zIndex = '99999';
+                spark.style.animation = `sparkAnim 0.8s forwards`;
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 800);
+            }
+        });
+        const sparkKeyframes = `
+            @keyframes sparkAnim {
+                0% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(0.2) translate(${Math.random()*100-50}px, ${Math.random()*100-50}px); opacity: 0; }
+            }
+        `;
+        const sparkStyle = document.createElement('style');
+        sparkStyle.textContent = sparkKeyframes;
+        document.head.appendChild(sparkStyle);
+    </script>
+
+    <!-- nota extra: Java puro nos cards animados -->
+    <div style="display:none;">camada de interatividade JS</div>
+</body>
+</html>
