@@ -2,238 +2,241 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java Realm | Meu Currículo Interativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Java Realm | Currículo Interativo 3D</title>
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', 'Arial', sans-serif; }
-        canvas { display: block; }
-        
-        #ui {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 20;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 30px 40px;
-            box-sizing: border-box;
-            text-shadow: 0 0 20px rgba(0,0,0,0.7);
-        }
-
-        .header {
-            border-left: 5px solid #f89820;
-            padding-left: 20px;
-            background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
-            backdrop-filter: blur(3px);
-            width: fit-content;
-            padding: 15px 30px 15px 25px;
-            border-radius: 0 30px 30px 0;
-            margin-left: -40px;
-        }
-        
-        .header h1 {
+        * {
             margin: 0;
-            font-size: 3.2rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: #f89820;
-            text-shadow: 0 0 20px #f89820, 0 0 40px #f60;
-        }
-        
-        .header p {
-            margin: 5px 0 0;
-            font-size: 1.2rem;
-            color: #ddd;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .controls-panel {
-            background: rgba(20, 20, 30, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(248, 152, 32, 0.4);
-            border-radius: 50px;
-            padding: 12px 25px;
-            width: fit-content;
-            font-size: 1rem;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            pointer-events: none;
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            overflow: hidden;
+            background: #0a0a14;
         }
-        
-        .controls-panel b { color: #f89820; }
+
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            border-left: 4px solid #f89820;
+            pointer-events: none;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #ccc;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+            border: 1px solid #f89820;
+            z-index: 100;
+        }
+
+        #controls span {
+            color: #f89820;
+            font-weight: bold;
+        }
+
+        #stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .stat-box.achievements {
+            border-color: #f89820;
+            color: #f89820;
+        }
+
+        .stat-box.codes {
+            border-color: #00ffff;
+            color: #00ffff;
+        }
 
         #info-card {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(10, 10, 15, 0.97);
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(10px);
             border: 2px solid #f89820;
-            border-radius: 40px;
-            padding: 40px 50px;
+            border-radius: 20px;
+            padding: 30px;
             max-width: 500px;
             width: 90%;
-            pointer-events: all;
-            display: none;
-            box-shadow: 0 0 80px rgba(248, 152, 32, 0.6);
-            backdrop-filter: blur(15px);
-            color: #eee;
-            text-align: center;
-            animation: cardGlow 2s infinite alternate;
-            z-index: 30;
             max-height: 80vh;
             overflow-y: auto;
+            color: white;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 50px rgba(248, 152, 32, 0.5);
+            animation: glowPulse 2s infinite;
         }
 
-        @keyframes cardGlow {
-            0% { box-shadow: 0 0 40px rgba(248,152,32,0.5); }
-            100% { box-shadow: 0 0 90px rgba(248,152,32,0.9); }
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 30px rgba(248, 152, 32, 0.5); }
+            50% { box-shadow: 0 0 60px rgba(248, 152, 32, 0.8); }
+            100% { box-shadow: 0 0 30px rgba(248, 152, 32, 0.5); }
         }
 
         #info-card h2 {
             color: #f89820;
-            font-size: 2.5rem;
-            margin: 0 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-size: 28px;
+            border-bottom: 2px solid #f89820;
+            padding-bottom: 10px;
         }
 
         #info-card h3 {
             color: #f89820;
-            font-size: 1.5rem;
-            margin: 20px 0 10px;
+            margin: 15px 0 10px;
+            font-size: 20px;
         }
 
         #info-card p {
-            font-size: 1.2rem;
             line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        #info-card ul {
-            text-align: left;
-            font-size: 1.1rem;
-            line-height: 1.8;
+            margin-bottom: 10px;
             color: #ddd;
         }
 
+        #info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
         #info-card li {
-            margin-bottom: 8px;
+            padding: 8px 15px;
+            margin: 5px 0;
+            background: rgba(248, 152, 32, 0.1);
+            border-left: 3px solid #f89820;
+            border-radius: 0 10px 10px 0;
+            color: #fff;
         }
 
         .skill-tag {
             display: inline-block;
-            background: rgba(248,152,32,0.2);
+            background: rgba(248, 152, 32, 0.2);
             border: 1px solid #f89820;
             padding: 5px 15px;
-            border-radius: 30px;
             margin: 5px;
-            font-size: 0.9rem;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #f89820;
         }
 
-        .btn-close {
+        .close-btn {
             background: transparent;
             border: 2px solid #f89820;
             color: #f89820;
-            padding: 12px 30px;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 16px;
             font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 60px;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(248,152,32,0.3);
             margin-top: 20px;
+            width: 100%;
+            transition: all 0.3s;
         }
-        
-        .btn-close:hover {
+
+        .close-btn:hover {
             background: #f89820;
-            color: #111;
-            transform: scale(1.07);
-            box-shadow: 0 0 40px #f89820;
+            color: #000;
         }
 
-        .active { display: block !important; }
-
-        #objective-counter {
+        #toast {
             position: absolute;
-            top: 30px;
-            right: 40px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            padding: 15px 25px;
-            border-radius: 30px;
-            border: 1px solid #f89820;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #f89820;
-            box-shadow: 0 0 30px rgba(248,152,32,0.3);
-            pointer-events: none;
-        }
-
-        #collectible-counter {
-            position: absolute;
-            bottom: 100px;
-            right: 40px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            padding: 15px 25px;
-            border-radius: 30px;
-            border: 1px solid #00ffff;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #00ffff;
-            box-shadow: 0 0 30px rgba(0,255,255,0.3);
-            pointer-events: none;
-        }
-
-        #message-toast {
-            position: absolute;
-            bottom: 40px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(248,152,32,0.9);
-            color: #111;
+            background: rgba(248, 152, 32, 0.9);
+            color: #000;
             padding: 15px 30px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 16px;
+            z-index: 1000;
             opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
+            transition: opacity 0.3s;
             white-space: nowrap;
-            box-shadow: 0 0 30px #f89820;
-            z-index: 25;
+            box-shadow: 0 0 20px rgba(248, 152, 32, 0.5);
+            pointer-events: none;
         }
 
-        .mini-map {
+        #mobile-joystick {
             position: absolute;
             bottom: 30px;
-            left: 30px;
-            width: 200px;
-            height: 200px;
-            background: rgba(0,0,0,0.6);
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
             border: 2px solid #f89820;
-            border-radius: 20px;
+            display: none;
+            z-index: 1000;
+            touch-action: none;
+        }
+
+        @media (max-width: 768px) {
+            #controls {
+                display: none;
+            }
+            #mobile-joystick {
+                display: block;
+            }
+            .stat-box {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-width: 100px;
+            }
+        }
+
+        #legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
             padding: 15px;
-            color: #fff;
-            font-size: 0.8rem;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+            border: 1px solid #f89820;
+            z-index: 100;
         }
 
-        .mini-map h4 {
-            margin: 0 0 10px;
-            color: #f89820;
-            text-align: center;
-        }
-
-        .mini-map .legend-item {
+        .legend-item {
             display: flex;
             align-items: center;
             margin: 5px 0;
@@ -248,50 +251,38 @@
     </style>
 </head>
 <body>
-
-    <div id="ui">
-        <div class="header">
-            <h1>⚡ MEU CURRÍCULO 3D</h1>
-            <p>Desenvolvedor Fullstack • Java • Cloud</p>
-        </div>
-        <div class="controls-panel">
-            <b>✦ W A S D</b> para explorar | <b style="color:#00ffff">✦ Colete códigos</b> | <b style="color:#f89820">✦ Aproxime-se para ver detalhes</b>
-        </div>
+    <div id="info">⚡ Java Realm - Currículo Interativo</div>
+    
+    <div id="stats">
+        <div class="stat-box achievements">🏆 <span id="achievements-count">0</span>/10</div>
+        <div class="stat-box codes">💾 <span id="cubes-collected">0</span>/8</div>
     </div>
 
-    <div id="objective-counter">
-        🏆 Conquistas: <span id="achievements-count">0</span>/10
+    <div id="controls">
+        <span>WASD</span> para mover | <span>ESC</span> fechar janela
     </div>
 
-    <div id="collectible-counter">
-        💾 Códigos: <span id="cubes-collected">0</span>/8
-    </div>
-
-    <div class="mini-map">
-        <h4>📍 LEGENDA</h4>
-        <div class="legend-item"><span class="color-dot" style="background:#f89820;"></span> Skills Técnicas</div>
-        <div class="legend-item"><span class="color-dot" style="background:#00ffff;"></span> Projetos</div>
-        <div class="legend-item"><span class="color-dot" style="background:#ff44aa;"></span> Formação</div>
-        <div class="legend-item"><span class="color-dot" style="background:#2ecc71;"></span> Experiência</div>
-        <div class="legend-item"><span class="color-dot" style="background:#ff0000;"></span> Contato</div>
+    <div id="legend">
+        <div class="legend-item"><span class="color-dot" style="background: #f89820;"></span> Skills</div>
+        <div class="legend-item"><span class="color-dot" style="background: #00ffff;"></span> Projetos</div>
+        <div class="legend-item"><span class="color-dot" style="background: #ff44aa;"></span> Formação</div>
+        <div class="legend-item"><span class="color-dot" style="background: #2ecc71;"></span> Experiência</div>
+        <div class="legend-item"><span class="color-dot" style="background: #ff0000;"></span> Contato</div>
     </div>
 
     <div id="info-card">
-        <h2 id="title">Título</h2>
-        <div id="content-area">
-            <p id="desc">Descrição detalhada</p>
-        </div>
-        <button class="btn-close" onclick="closeInfo()">FECHAR</button>
+        <h2 id="card-title"></h2>
+        <div id="card-content"></div>
+        <button class="close-btn" onclick="closeInfoCard()">FECHAR</button>
     </div>
 
-    <div id="message-toast">
-        ⚡ Mensagem
-    </div>
+    <div id="toast"></div>
+    <div id="mobile-joystick"></div>
 
     <script type="importmap">
         {
             "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
             }
         }
     </script>
@@ -299,409 +290,345 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- CENA E RENDER ---
+        // Configuração inicial
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0a14);
-        scene.fog = new THREE.Fog(0x0a0a14, 15, 70);
+        scene.fog = new THREE.Fog(0x0a0a14, 20, 80);
 
-        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 8, 18);
-        
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 8, 20);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         document.body.appendChild(renderer.domElement);
 
-        // --- LUZES ---
-        const ambient = new THREE.AmbientLight(0x404060);
-        scene.add(ambient);
+        // Luzes
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
 
-        const mainLight = new THREE.DirectionalLight(0xffeedd, 1.5);
-        mainLight.position.set(5, 20, 10);
-        mainLight.castShadow = true;
-        mainLight.receiveShadow = true;
-        mainLight.shadow.mapSize.width = 1024;
-        mainLight.shadow.mapSize.height = 1024;
-        const d = 30;
-        mainLight.shadow.camera.left = -d;
-        mainLight.shadow.camera.right = d;
-        mainLight.shadow.camera.top = d;
-        mainLight.shadow.camera.bottom = -d;
-        mainLight.shadow.camera.near = 1;
-        mainLight.shadow.camera.far = 60;
-        scene.add(mainLight);
+        const directionalLight = new THREE.DirectionalLight(0xffeedd, 1.2);
+        directionalLight.position.set(10, 20, 5);
+        directionalLight.castShadow = true;
+        directionalLight.receiveShadow = true;
+        directionalLight.shadow.mapSize.width = 1024;
+        directionalLight.shadow.mapSize.height = 1024;
+        directionalLight.shadow.camera.near = 0.5;
+        directionalLight.shadow.camera.far = 50;
+        directionalLight.shadow.camera.left = -20;
+        directionalLight.shadow.camera.right = 20;
+        directionalLight.shadow.camera.top = 20;
+        directionalLight.shadow.camera.bottom = -20;
+        scene.add(directionalLight);
 
-        const fillLight = new THREE.PointLight(0x4466ff, 0.8);
-        fillLight.position.set(-5, 5, 10);
-        scene.add(fillLight);
+        const pointLight1 = new THREE.PointLight(0x4466ff, 0.5);
+        pointLight1.position.set(-5, 5, 10);
+        scene.add(pointLight1);
 
-        // --- CHÃO ---
-        const groundGeo = new THREE.CircleGeometry(50, 32);
-        const groundMat = new THREE.MeshStandardMaterial({ 
-            color: 0x1a1a2e, 
-            roughness: 0.4, 
+        const pointLight2 = new THREE.PointLight(0xff8844, 0.5);
+        pointLight2.position.set(5, 5, -10);
+        scene.add(pointLight2);
+
+        // Chão
+        const groundGeometry = new THREE.CircleGeometry(60, 32);
+        const groundMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x1a1a2e,
+            roughness: 0.4,
             metalness: 0.1,
             emissive: 0x050510
         });
-        const ground = new THREE.Mesh(groundGeo, groundMat);
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
         ground.rotation.x = -Math.PI / 2;
         ground.position.y = 0;
         ground.receiveShadow = true;
         scene.add(ground);
 
-        const gridHelper = new THREE.GridHelper(80, 50, 0xf89820, 0x335588);
+        // Grid decorativo
+        const gridHelper = new THREE.GridHelper(80, 40, 0xf89820, 0x335588);
         gridHelper.position.y = 0.01;
         scene.add(gridHelper);
 
-        // --- JOGADOR ---
-        const playerGeo = new THREE.SphereGeometry(0.7, 32, 32);
-        const playerMat = new THREE.MeshStandardMaterial({ 
-            color: 0xffffff, 
-            emissive: 0x00aaff,
-            emissiveIntensity: 1.8
+        // Jogador (esfera flutuante)
+        const playerGeometry = new THREE.SphereGeometry(0.8, 32, 32);
+        const playerMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x00aaff,
+            emissive: 0x004466,
+            emissiveIntensity: 1.5
         });
-        const player = new THREE.Mesh(playerGeo, playerMat);
-        player.position.y = 0.7;
+        const player = new THREE.Mesh(playerGeometry, playerMaterial);
+        player.position.y = 1;
         player.castShadow = true;
         player.receiveShadow = true;
         scene.add(player);
 
-        // Partículas ao redor do jogador
-        const particleCount = 8;
-        const particleGeo = new THREE.BufferGeometry();
+        // Partículas do jogador
+        const particleCount = 12;
+        const particleGeometry = new THREE.BufferGeometry();
         const particlePositions = new Float32Array(particleCount * 3);
         for (let i = 0; i < particleCount; i++) {
             const angle = (i / particleCount) * Math.PI * 2;
-            particlePositions[i*3] = Math.cos(angle) * 1.2;
-            particlePositions[i*3+1] = 0.2;
-            particlePositions[i*3+2] = Math.sin(angle) * 1.2;
+            particlePositions[i*3] = Math.cos(angle) * 1.5;
+            particlePositions[i*3+1] = Math.sin(angle) * 0.5;
+            particlePositions[i*3+2] = Math.sin(angle) * 1.5;
         }
-        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-        const particleMat = new THREE.PointsMaterial({ color: 0x88ccff, size: 0.1, blending: THREE.AdditiveBlending });
-        const particles = new THREE.Points(particleGeo, particleMat);
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        const particleMaterial = new THREE.PointsMaterial({ 
+            color: 0x88ccff, 
+            size: 0.15,
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        });
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
         player.add(particles);
 
-        // --- SISTEMA DE CONQUISTAS ---
-        let achievementsCount = 0;
-        let cubesCollected = 0;
-        const discoveredItems = new Set();
-
-        function updateAchievements() {
-            document.getElementById('achievements-count').innerText = achievementsCount;
-            if (achievementsCount === 10) {
-                showMessage("🎉 PARABÉNS! VOCÊ DESCOBRIU TUDO SOBRE MIM!");
-            }
+        // Estrelas de fundo
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 800;
+        const starsPositions = new Float32Array(starsCount * 3);
+        for (let i = 0; i < starsCount; i++) {
+            starsPositions[i*3] = (Math.random() - 0.5) * 200;
+            starsPositions[i*3+1] = (Math.random() - 0.5) * 200;
+            starsPositions[i*3+2] = (Math.random() - 0.5) * 200 - 100;
         }
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        const starsMaterial = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.2 });
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
 
-        // --- CARREGADOR DE TEXTURAS ---
-        const loader = new THREE.TextureLoader();
-        
-        // ===== DADOS DO CURRÍCULO =====
+        // Dados do currículo
         const curriculumData = [
-            // Skills Técnicas (Laranja)
+            // Skills (laranja)
             { 
                 type: 'skill',
-                x: 6, z: -12, 
-                title: "JAVA", 
-                desc: "☕ Especialista em Java",
-                fullData: {
+                color: 0xf89820,
+                position: [6, 0, -12],
+                title: "JAVA",
+                desc: "Especialista em Java",
+                details: {
                     nivel: "Avançado",
                     experiencia: "5+ anos",
-                    frameworks: ["Spring Boot", "Jakarta EE", "Hibernate"],
-                    certificacoes: ["OCA Java SE 8", "Spring Professional"],
-                    projetos: ["APIs escaláveis", "Microsserviços", "Batch processing"]
+                    frameworks: ["Spring Boot", "Hibernate", "Maven", "JUnit"],
+                    certificacoes: ["OCA Java SE 8", "Spring Professional"]
                 }
             },
             { 
                 type: 'skill',
-                x: -7, z: -18, 
-                title: "CSS3", 
-                desc: "🎨 Estilização avançada",
-                fullData: {
-                    nivel: "Avançado",
-                    experiencia: "4+ anos",
-                    frameworks: ["Tailwind", "Bootstrap", "SASS"],
-                    tecnicas: ["Flexbox", "Grid", "Animações", "Responsividade"],
-                    projetos: ["Design systems", "Landing pages", "Dashboards"]
-                }
-            },
-            { 
-                type: 'skill',
-                x: 9, z: -22, 
-                title: "HTML5", 
-                desc: "🏗️ Estrutura semântica",
-                fullData: {
-                    nivel: "Avançado",
-                    experiencia: "5+ anos",
-                    tecnicas: ["Semântica", "Acessibilidade (WCAG)", "SEO", "Microdata"],
-                    projetos: ["E-commerces", "Portais", "Sites institucionais"]
-                }
-            },
-            { 
-                type: 'skill',
-                x: -5, z: -8, 
-                title: "NODE.JS", 
-                desc: "⚡ Backend escalável",
-                fullData: {
-                    nivel: "Avançado",
-                    experiencia: "4+ anos",
-                    frameworks: ["Express", "NestJS", "Fastify"],
-                    bancos: ["MongoDB", "PostgreSQL", "Redis"],
-                    projetos: ["APIs REST", "Websockets", "Microservices"]
-                }
-            },
-            { 
-                type: 'skill',
-                x: 2, z: -28, 
-                title: "SPRING BOOT", 
-                desc: "🍃 Ecossistema Spring",
-                fullData: {
+                color: 0xf89820,
+                position: [-7, 0, -18],
+                title: "SPRING BOOT",
+                desc: "Framework principal",
+                details: {
                     nivel: "Avançado",
                     experiencia: "4+ anos",
                     modulos: ["Spring Data", "Spring Security", "Spring Cloud", "Spring Batch"],
-                    projetos: ["Microsserviços", "APIs RESTful", "Sistemas corporativos"]
+                    projetos: ["APIs REST", "Microsserviços", "Sistemas corporativos"]
+                }
+            },
+            { 
+                type: 'skill',
+                color: 0xf89820,
+                position: [9, 0, -22],
+                title: "JAVASCRIPT",
+                desc: "Full Stack Development",
+                details: {
+                    nivel: "Avançado",
+                    experiencia: "4+ anos",
+                    stacks: ["React", "Node.js", "TypeScript", "Vue.js"],
+                    projetos: ["SPAs", "APIs REST", "Aplicações em tempo real"]
                 }
             },
             
-            // Projetos (Ciano)
+            // Projetos (ciano)
             { 
                 type: 'project',
-                x: 12, z: -15, 
-                title: "E-COMMERCE API", 
-                desc: "🛒 Plataforma completa",
-                fullData: {
-                    descricao: "API robusta para e-commerce com Java e Spring Boot",
-                    tecnologias: ["Java 17", "Spring Boot", "PostgreSQL", "Redis", "Docker"],
-                    features: ["Autenticação JWT", "Pagamento com Stripe", "Cache", "Fila com RabbitMQ"],
+                color: 0x00ffff,
+                position: [12, 0, -15],
+                title: "E-COMMERCE API",
+                desc: "Plataforma de vendas completa",
+                details: {
+                    descricao: "API robusta para e-commerce com microservices",
+                    tecnologias: ["Java 17", "Spring Boot", "PostgreSQL", "Redis", "Docker", "Kubernetes"],
+                    features: ["Autenticação JWT", "Pagamentos", "Cache distribuído", "Filas com RabbitMQ"],
                     link: "github.com/seuuser/ecommerce"
                 }
             },
             { 
                 type: 'project',
-                x: -10, z: -25, 
-                title: "DASHBOARD ANALYTICS", 
-                desc: "📊 Visualização de dados",
-                fullData: {
-                    descricao: "Dashboard interativo para visualização de métricas em tempo real",
-                    tecnologias: ["React", "Node.js", "Socket.io", "MongoDB", "D3.js"],
-                    features: ["Gráficos dinâmicos", "Websockets", "Exportação de relatórios"],
-                    link: "github.com/seuuser/dashboard"
+                color: 0x00ffff,
+                position: [-10, 0, -25],
+                title: "TASK FLOW",
+                desc: "Sistema de gestão de tarefas",
+                details: {
+                    descricao: "Aplicação completa para gestão de projetos",
+                    tecnologias: ["React", "Node.js", "MongoDB", "Socket.io", "Tailwind"],
+                    features: ["Tempo real", "Kanban", "Gráficos", "Notificações"],
+                    link: "github.com/seuuser/taskflow"
                 }
             },
             
-            // Formação (Rosa)
+            // Formação (rosa)
             { 
                 type: 'education',
-                x: -15, z: -8, 
-                title: "BACHARELADO EM CC", 
-                desc: "🎓 Universidade Federal",
-                fullData: {
+                color: 0xff44aa,
+                position: [-15, 0, -8],
+                title: "BACHARELADO EM CC",
+                desc: "Ciência da Computação",
+                details: {
                     curso: "Ciência da Computação",
                     instituicao: "Universidade Federal (2018-2022)",
-                    destaque: "CR 8.5 - Mérito acadêmico",
-                    disciplinas: ["Estrutura de Dados", "Algoritmos", "Banco de Dados", "Redes", "Compiladores"],
-                    tcc: "Otimização de consultas em bancos NoSQL"
+                    destaque: "CR 8.7 - Mérito acadêmico",
+                    disciplinas: ["Estrutura de Dados", "Algoritmos", "BD", "Redes", "Compiladores"],
+                    tcc: "Otimização de queries em bancos NoSQL"
                 }
             },
             
-            // Experiência (Verde)
+            // Experiência (verde)
             { 
                 type: 'experience',
-                x: 18, z: -20, 
-                title: "SENIOR DEV - TECH CORP", 
-                desc: "💼 Última experiência",
-                fullData: {
+                color: 0x2ecc71,
+                position: [18, 0, -20],
+                title: "SENIOR DEVELOPER",
+                desc: "Tech Corp (2022-presente)",
+                details: {
                     cargo: "Desenvolvedor Fullstack Sênior",
-                    periodo: "2022 - Presente",
                     responsabilidades: [
-                        "Liderança técnica de squad com 5 devs",
-                        "Arquitetura de microsserviços com Spring Cloud",
+                        "Liderança técnica de squad",
+                        "Arquitetura de microsserviços",
                         "Code review e mentoria",
-                        "Otimização de performance (redução de 40% no tempo de resposta)"
+                        "Otimização de performance"
                     ],
                     stack: ["Java", "Spring", "React", "AWS", "Kafka"]
                 }
             },
             { 
                 type: 'experience',
-                x: -18, z: -30, 
-                title: "PLENO DEV - STARTUP X", 
-                desc: "🚀 Crescimento acelerado",
-                fullData: {
+                color: 0x2ecc71,
+                position: [-18, 0, -30],
+                title: "PLENO DEV",
+                desc: "Startup X (2020-2022)",
+                details: {
                     cargo: "Desenvolvedor Pleno",
-                    periodo: "2020 - 2022",
                     responsabilidades: [
-                        "Desenvolvimento de funcionalidades core",
-                        "Integração com APIs de terceiros",
-                        "Testes automatizados e CI/CD",
-                        "Participação em hackathons (1º lugar)"
+                        "Desenvolvimento de features core",
+                        "Integração com APIs",
+                        "Testes automatizados",
+                        "Participação em hackathons"
                     ],
                     stack: ["Node.js", "React", "MongoDB", "Docker"]
                 }
             },
             
-            // Contato (Vermelho)
+            // Contato (vermelho)
             { 
                 type: 'contact',
-                x: 0, z: -40, 
-                title: "CONTATO", 
-                desc: "📫 Fale comigo",
-                fullData: {
+                color: 0xff0000,
+                position: [0, 0, -45],
+                title: "CONTATO",
+                desc: "Vamos conversar!",
+                details: {
                     email: "seu.email@exemplo.com",
                     linkedin: "linkedin.com/in/seuperfil",
                     github: "github.com/seuuser",
-                    whatsapp: "+55 11 99999-9999",
                     disponivel: "Disponível para novas oportunidades"
                 }
             }
         ];
 
-        const markerMeshes = [];
+        // Criar marcadores
+        const markers = [];
+        
+        curriculumData.forEach((data, index) => {
+            // Geometria baseada no tipo
+            let geometry;
+            switch(data.type) {
+                case 'skill':
+                    geometry = new THREE.BoxGeometry(2, 2.5, 2);
+                    break;
+                case 'project':
+                    geometry = new THREE.CylinderGeometry(1.2, 1.2, 2.5, 8);
+                    break;
+                case 'education':
+                    geometry = new THREE.ConeGeometry(1.4, 2.5, 8);
+                    break;
+                case 'experience':
+                    geometry = new THREE.TorusGeometry(1.2, 0.3, 16, 32);
+                    break;
+                case 'contact':
+                    geometry = new THREE.SphereGeometry(1.4, 16, 16);
+                    break;
+                default:
+                    geometry = new THREE.BoxGeometry(2, 2, 2);
+            }
 
-        // Função para criar material com textura
-        function createLogoMaterial(logoUrl, fallbackColor) {
-            return new Promise((resolve) => {
-                loader.load(logoUrl, 
-                    (texture) => {
-                        const material = new THREE.MeshStandardMaterial({ 
-                            map: texture,
-                            emissive: 0x222222,
-                            side: THREE.DoubleSide,
-                            transparent: true
-                        });
-                        resolve(material);
-                    },
-                    undefined,
-                    (error) => {
-                        console.warn(`Erro ao carregar ${logoUrl}, usando fallback colorido.`);
-                        const material = new THREE.MeshStandardMaterial({ 
-                            color: fallbackColor,
-                            emissive: 0x222222,
-                            side: THREE.DoubleSide
-                        });
-                        resolve(material);
-                    }
-                );
-            });
-        }
-
-        // Cores por tipo
-        const typeColors = {
-            skill: 0xf89820,
-            project: 0x00ffff,
-            education: 0xff44aa,
-            experience: 0x2ecc71,
-            contact: 0xff0000
-        };
-
-        // Criar todos os marcadores do currículo
-        curriculumData.forEach((data) => {
-            const color = typeColors[data.type] || 0xffffff;
-            
-            // Geometria diferente por tipo
-            let geom;
-            if (data.type === 'skill') geom = new THREE.BoxGeometry(2.5, 2.8, 0.8);
-            else if (data.type === 'project') geom = new THREE.CylinderGeometry(1.2, 1.2, 3, 8);
-            else if (data.type === 'education') geom = new THREE.ConeGeometry(1.5, 3, 8);
-            else if (data.type === 'experience') geom = new THREE.TorusGeometry(1.2, 0.3, 16, 32);
-            else geom = new THREE.SphereGeometry(1.5, 16);
-            
-            const material = new THREE.MeshStandardMaterial({ 
-                color: color,
-                emissive: color,
+            const material = new THREE.MeshStandardMaterial({
+                color: data.color,
+                emissive: data.color,
                 emissiveIntensity: 0.3,
                 transparent: true,
                 opacity: 0.9
             });
-            
-            const mesh = new THREE.Mesh(geom, material);
-            mesh.position.set(data.x, 1.8, data.z);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            
-            // Adiciona borda
-            const edges = new THREE.EdgesGeometry(geom);
+
+            const marker = new THREE.Mesh(geometry, material);
+            marker.position.set(data.position[0], 1.5, data.position[2]);
+            marker.castShadow = true;
+            marker.receiveShadow = true;
+
+            // Adicionar borda
+            const edges = new THREE.EdgesGeometry(geometry);
             const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }));
-            mesh.add(line);
-            
-            mesh.userData = {
+            marker.add(line);
+
+            // Adicionar texto flutuante (placeholder - em produção usaria CSS2DRivder)
+            marker.userData = {
                 ...data,
                 discovered: false,
-                getFullContent: () => {
-                    const d = data.fullData;
-                    let html = `<p>${data.desc}</p>`;
-                    
-                    if (data.type === 'skill') {
-                        html += `<h3>📊 Nível: ${d.nivel}</h3>`;
-                        html += `<p><strong>Experiência:</strong> ${d.experiencia}</p>`;
-                        html += `<h3>🔧 Frameworks:</h3><ul>${d.frameworks.map(f => `<li>${f}</li>`).join('')}</ul>`;
-                        html += `<h3>📜 Certificações:</h3><ul>${d.certificacoes.map(c => `<li>${c}</li>`).join('')}</ul>`;
-                    } else if (data.type === 'project') {
-                        html += `<h3>📋 Descrição:</h3><p>${d.descricao}</p>`;
-                        html += `<h3>🛠️ Tecnologias:</h3><div>${d.tecnologias.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>`;
-                        html += `<h3>✨ Features:</h3><ul>${d.features.map(f => `<li>${f}</li>`).join('')}</ul>`;
-                        if (d.link) html += `<p><strong>🔗 Link:</strong> ${d.link}</p>`;
-                    } else if (data.type === 'education') {
-                        html += `<h3>🎓 ${d.curso}</h3>`;
-                        html += `<p><strong>Instituição:</strong> ${d.instituicao}</p>`;
-                        html += `<p><strong>Destaque:</strong> ${d.destaque}</p>`;
-                        html += `<h3>📚 Disciplinas:</h3><ul>${d.disciplinas.map(disc => `<li>${disc}</li>`).join('')}</ul>`;
-                        html += `<p><strong>TCC:</strong> ${d.tcc}</p>`;
-                    } else if (data.type === 'experience') {
-                        html += `<h3>💼 ${d.cargo}</h3>`;
-                        html += `<p><strong>Período:</strong> ${d.periodo}</p>`;
-                        html += `<h3>📋 Responsabilidades:</h3><ul>${d.responsabilidades.map(r => `<li>${r}</li>`).join('')}</ul>`;
-                        html += `<h3>🛠️ Stack:</h3><div>${d.stack.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>`;
-                    } else if (data.type === 'contact') {
-                        html += `<h3>📧 Email:</h3><p>${d.email}</p>`;
-                        html += `<h3>🔗 LinkedIn:</h3><p>${d.linkedin}</p>`;
-                        html += `<h3>🐙 GitHub:</h3><p>${d.github}</p>`;
-                        html += `<h3>📱 WhatsApp:</h3><p>${d.whatsapp}</p>`;
-                        html += `<h3>✅ ${d.disponivel}</h3>`;
-                    }
-                    
-                    return html;
-                }
+                id: index
             };
-            
-            scene.add(mesh);
-            markerMeshes.push(mesh);
 
-            // Luz pontual
-            const pointLight = new THREE.PointLight(color, 1.2, 12);
-            pointLight.position.set(data.x, 3, data.z);
-            scene.add(pointLight);
+            scene.add(marker);
+            markers.push(marker);
+
+            // Adicionar luz pontual
+            const light = new THREE.PointLight(data.color, 1, 10);
+            light.position.set(data.position[0], 3, data.position[2]);
+            scene.add(light);
         });
 
-        // --- CUBOS COLECIONÁVEIS ---
+        // Cubos colecionáveis
         const collectibles = [];
         const collectiblePositions = [
-            { x: 3, z: -5 }, { x: -4, z: -10 }, { x: 8, z: -15 }, { x: -6, z: -22 },
-            { x: 12, z: -18 }, { x: -10, z: -25 }, { x: 4, z: -30 }, { x: -3, z: -12 }
+            [3, 0.5, -5], [-4, 0.5, -10], [8, 0.5, -15], [-6, 0.5, -22],
+            [12, 0.5, -18], [-10, 0.5, -25], [4, 0.5, -30], [-3, 0.5, -12]
         ];
 
         collectiblePositions.forEach((pos, i) => {
-            const geom = new THREE.BoxGeometry(0.6, 0.6, 0.6);
-            const mat = new THREE.MeshStandardMaterial({ 
+            const geometry = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+            const material = new THREE.MeshStandardMaterial({
                 color: 0x00ffff,
                 emissive: 0x0088aa,
                 emissiveIntensity: 2
             });
-            const cube = new THREE.Mesh(geom, mat);
-            cube.position.set(pos.x, 0.5, pos.z);
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.set(pos[0], pos[1], pos[2]);
             cube.castShadow = true;
             cube.receiveShadow = true;
             
-            cube.userData = { id: i, collected: false, floatOffset: Math.random() * 100 };
+            cube.userData = { 
+                id: i, 
+                collected: false,
+                floatOffset: Math.random() * Math.PI * 2
+            };
+            
             scene.add(cube);
             collectibles.push(cube);
         });
 
-        // --- ÁRVORES E DECORAÇÃO ---
+        // Árvores decorativas
         const treePositions = [
-            { x: 15, z: -5 }, { x: -15, z: -10 }, { x: 12, z: -30 }, { x: -12, z: -25 }
+            [15, -5], [-15, -10], [12, -30], [-12, -25],
+            [20, -8], [-20, -15], [8, -40], [-8, -35]
         ];
 
         treePositions.forEach(pos => {
@@ -709,20 +636,23 @@
             const trunkGeo = new THREE.CylinderGeometry(0.5, 0.7, 2);
             const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
             const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-            trunk.position.set(pos.x, 1, pos.z);
+            trunk.position.set(pos[0], 1, pos[1]);
             trunk.castShadow = true;
             trunk.receiveShadow = true;
             scene.add(trunk);
 
-            // Copa
+            // Folhas
             for (let i = 0; i < 5; i++) {
-                const leafGeo = new THREE.SphereGeometry(0.8, 8);
-                const leafMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71, emissive: 0x0a3300 });
+                const leafGeo = new THREE.SphereGeometry(0.7, 8);
+                const leafMat = new THREE.MeshStandardMaterial({ 
+                    color: 0x2ecc71,
+                    emissive: 0x0a3300
+                });
                 const leaf = new THREE.Mesh(leafGeo, leafMat);
                 leaf.position.set(
-                    pos.x + (Math.random() - 0.5) * 1.5,
-                    2.2 + Math.random() * 1.2,
-                    pos.z + (Math.random() - 0.5) * 1.5
+                    pos[0] + (Math.random() - 0.5) * 1.2,
+                    2 + Math.random() * 1,
+                    pos[1] + (Math.random() - 0.5) * 1.2
                 );
                 leaf.castShadow = true;
                 leaf.receiveShadow = true;
@@ -730,121 +660,162 @@
             }
         });
 
-        // --- PORTAL (acesso rápido ao contato) ---
-        const portalBaseGeo = new THREE.CylinderGeometry(2, 2, 0.5, 32);
-        const portalBaseMat = new THREE.MeshStandardMaterial({ color: 0x333333, emissive: 0x440022 });
-        const portalBase = new THREE.Mesh(portalBaseGeo, portalBaseMat);
-        portalBase.position.set(0, 0.25, -45);
-        portalBase.receiveShadow = true;
-        scene.add(portalBase);
+        // Controles
+        const keys = { w: false, a: false, s: false, d: false, shift: false };
+        
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+                keys[key] = true;
+                e.preventDefault();
+            }
+            if (key === 'shift') {
+                keys.shift = true;
+            }
+            if (key === 'escape') {
+                closeInfoCard();
+            }
+        });
 
-        const portalRingGeo = new THREE.TorusGeometry(1.5, 0.2, 16, 64);
-        const portalRingMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0x440000 });
-        const portalRing = new THREE.Mesh(portalRingGeo, portalRingMat);
-        portalRing.rotation.x = Math.PI / 2;
-        portalRing.position.set(0, 1.2, -45);
-        portalRing.castShadow = true;
-        scene.add(portalRing);
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+                keys[key] = false;
+            }
+            if (key === 'shift') {
+                keys.shift = false;
+            }
+        });
 
-        // --- ESTRELAS ---
-        const starsGeo = new THREE.BufferGeometry();
-        const starsCount = 400;
-        const starsPos = new Float32Array(starsCount * 3);
-        for (let i = 0; i < starsCount; i++) {
-            starsPos[i*3] = (Math.random() - 0.5) * 200;
-            starsPos[i*3+1] = (Math.random() - 0.5) * 100;
-            starsPos[i*3+2] = (Math.random() - 0.5) * 200 - 100;
-        }
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        const starsMat = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.3, transparent: true, opacity: 0.7 });
-        const stars = new THREE.Points(starsGeo, starsMat);
-        scene.add(stars);
-
-        // --- MOVIMENTO E INTERAÇÃO ---
-        const keys = { w: false, a: false, s: false, d: false };
-        window.addEventListener('keydown', (e) => { const k = e.key.toLowerCase(); if (['w','a','s','d'].includes(k)) keys[k] = true; });
-        window.addEventListener('keyup', (e) => { const k = e.key.toLowerCase(); if (['w','a','s','d'].includes(k)) keys[k] = false; });
-
-        const infoCard = document.getElementById('info-card');
+        // Estado da UI
         let cardOpen = false;
+        let achievementsCount = 0;
+        let cubesCollected = 0;
         let currentTarget = null;
-        let messageTimeout = null;
+        let toastTimeout = null;
 
-        function showMessage(msg) {
-            const toast = document.getElementById('message-toast');
-            toast.style.opacity = 1;
-            toast.innerHTML = msg;
-            
-            if (messageTimeout) clearTimeout(messageTimeout);
-            messageTimeout = setTimeout(() => {
-                toast.style.opacity = 0;
-            }, 2000);
-        }
-
+        // Funções UI
         window.showInfo = (data) => {
-            document.getElementById('title').innerHTML = `${data.type === 'skill' ? '🔧' : data.type === 'project' ? '📁' : data.type === 'education' ? '🎓' : data.type === 'experience' ? '💼' : '📫'} ${data.title}`;
-            document.getElementById('content-area').innerHTML = data.getFullContent();
-            infoCard.classList.add('active');
+            document.getElementById('card-title').innerHTML = `${data.title}`;
+            
+            let content = `<p>${data.desc}</p>`;
+            
+            if (data.type === 'skill') {
+                content += `<h3>📊 Nível: ${data.details.nivel}</h3>`;
+                content += `<p><strong>Experiência:</strong> ${data.details.experiencia}</p>`;
+                if (data.details.frameworks) {
+                    content += `<h3>🔧 Frameworks:</h3><ul>${data.details.frameworks.map(f => `<li>${f}</li>`).join('')}</ul>`;
+                }
+                if (data.details.certificacoes) {
+                    content += `<h3>📜 Certificações:</h3><ul>${data.details.certificacoes.map(c => `<li>${c}</li>`).join('')}</ul>`;
+                }
+            } else if (data.type === 'project') {
+                content += `<h3>📋 Descrição:</h3><p>${data.details.descricao}</p>`;
+                content += `<h3>🛠️ Tecnologias:</h3><div>${data.details.tecnologias.map(t => `<span class="skill-tag">${t}</span>`).join('')}</div>`;
+                content += `<h3>✨ Features:</h3><ul>${data.details.features.map(f => `<li>${f}</li>`).join('')}</ul>`;
+                if (data.details.link) content += `<p><strong>🔗 Link:</strong> ${data.details.link}</p>`;
+            } else if (data.type === 'education') {
+                content += `<h3>🎓 ${data.details.curso}</h3>`;
+                content += `<p><strong>Instituição:</strong> ${data.details.instituicao}</p>`;
+                content += `<p><strong>Destaque:</strong> ${data.details.destaque}</p>`;
+                content += `<h3>📚 Disciplinas:</h3><ul>${data.details.disciplinas.map(d => `<li>${d}</li>`).join('')}</ul>`;
+                content += `<p><strong>TCC:</strong> ${data.details.tcc}</p>`;
+            } else if (data.type === 'experience') {
+                content += `<h3>💼 ${data.details.cargo}</h3>`;
+                content += `<h3>📋 Responsabilidades:</h3><ul>${data.details.responsabilidades.map(r => `<li>${r}</li>`).join('')}</ul>`;
+                content += `<h3>🛠️ Stack:</h3><div>${data.details.stack.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>`;
+            } else if (data.type === 'contact') {
+                content += `<h3>📧 Email:</h3><p>${data.details.email}</p>`;
+                content += `<h3>🔗 LinkedIn:</h3><p>${data.details.linkedin}</p>`;
+                content += `<h3>🐙 GitHub:</h3><p>${data.details.github}</p>`;
+                content += `<h3>✅ ${data.details.disponivel}</h3>`;
+            }
+            
+            document.getElementById('card-content').innerHTML = content;
+            document.getElementById('info-card').style.display = 'block';
             cardOpen = true;
             
             if (!data.discovered) {
                 data.discovered = true;
                 achievementsCount++;
-                updateAchievements();
-                showMessage(`✨ Novo item descoberto: ${data.title}`);
+                document.getElementById('achievements-count').textContent = achievementsCount;
+                showToast(`✨ Novo item descoberto: ${data.title}`);
+                
+                if (achievementsCount === markers.length) {
+                    showToast("🎉 PARABÉNS! Você descobriu tudo sobre mim!");
+                }
             }
         };
 
-        window.closeInfo = () => {
-            infoCard.classList.remove('active');
+        window.closeInfoCard = () => {
+            document.getElementById('info-card').style.display = 'none';
             cardOpen = false;
             if (currentTarget) {
-                const dir = player.position.clone().sub(currentTarget.position).normalize();
-                player.position.add(dir.multiplyScalar(2.5));
+                // Pequeno recuo ao fechar
+                const direction = player.position.clone().sub(currentTarget.position).normalize();
+                player.position.add(direction.multiplyScalar(1.5));
                 currentTarget = null;
             }
         };
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 2000);
+        }
 
         // Loop de animação
         function animate() {
             requestAnimationFrame(animate);
 
+            // Movimento do jogador
             if (!cardOpen) {
-                const speed = 0.18;
+                const speed = keys.shift ? 0.3 : 0.15;
+                
                 if (keys.w) player.position.z -= speed;
                 if (keys.s) player.position.z += speed;
                 if (keys.a) player.position.x -= speed;
                 if (keys.d) player.position.x += speed;
 
+                // Limites do mapa
                 player.position.x = Math.max(-25, Math.min(25, player.position.x));
                 player.position.z = Math.max(-48, Math.min(10, player.position.z));
             }
 
+            // Atualizar câmera
             const targetCamPos = new THREE.Vector3(
                 player.position.x,
-                player.position.y + 7.5,
-                player.position.z + 13
+                player.position.y + 7,
+                player.position.z + 12
             );
-            camera.position.lerp(targetCamPos, 0.08);
+            camera.position.lerp(targetCamPos, 0.05);
             camera.lookAt(player.position);
 
-            // Detecção de proximidade para marcadores
-            let closestDist = 8;
-            let closestMesh = null;
-            markerMeshes.forEach(m => {
-                const dist = player.position.distanceTo(m.position);
-                if (dist < 4.0 && dist < closestDist && !cardOpen) {
-                    closestDist = dist;
-                    closestMesh = m;
-                }
-            });
+            // Detecção de proximidade
+            if (!cardOpen) {
+                let closestDist = Infinity;
+                let closestMarker = null;
 
-            if (closestMesh && !cardOpen) {
-                currentTarget = closestMesh;
-                showInfo(closestMesh.userData);
+                markers.forEach(marker => {
+                    const dist = player.position.distanceTo(marker.position);
+                    if (dist < 3.5 && dist < closestDist) {
+                        closestDist = dist;
+                        closestMarker = marker;
+                    }
+                });
+
+                if (closestMarker && !cardOpen) {
+                    currentTarget = closestMarker;
+                    showInfo(closestMarker.userData);
+                }
             }
 
-            // Detecção de coleta dos cubos
+            // Coleta de cubos
             collectibles.forEach(cube => {
                 if (!cube.userData.collected) {
                     const dist = player.position.distanceTo(cube.position);
@@ -852,47 +823,80 @@
                         cube.userData.collected = true;
                         scene.remove(cube);
                         cubesCollected++;
-                        document.getElementById('cubes-collected').innerText = cubesCollected;
-                        showMessage(`💾 Código coletado! (${cubesCollected}/8)`);
+                        document.getElementById('cubes-collected').textContent = cubesCollected;
+                        showToast(`💾 Código coletado! (${cubesCollected}/8)`);
                         
                         if (cubesCollected === collectibles.length) {
                             achievementsCount++;
-                            updateAchievements();
-                            showMessage("🌟 VOCÊ COLETOU TODOS OS CÓDIGOS!");
+                            document.getElementById('achievements-count').textContent = achievementsCount;
+                            showToast("🌟 VOCÊ COLETOU TODOS OS CÓDIGOS!");
                         }
                     }
                 }
             });
 
             // Animações
-            markerMeshes.forEach((m, i) => {
-                m.rotation.y += 0.005;
-                m.position.y = 1.8 + Math.sin(Date.now() * 0.002 + i) * 0.3;
+            markers.forEach((marker, i) => {
+                marker.rotation.y += 0.005;
+                marker.position.y = 1.5 + Math.sin(Date.now() * 0.002 + i) * 0.2;
             });
 
             collectibles.forEach((cube, i) => {
                 cube.rotation.x += 0.02;
                 cube.rotation.y += 0.03;
-                cube.position.y = 0.5 + Math.sin(Date.now() * 0.003 + i) * 0.2;
+                cube.position.y = 0.5 + Math.sin(Date.now() * 0.003 + cube.userData.floatOffset) * 0.2;
             });
 
-            portalRing.rotation.y += 0.01;
-            portalRing.rotation.z += 0.005;
-
-            stars.rotation.y += 0.0001;
+            stars.rotation.y += 0.0002;
 
             renderer.render(scene, camera);
         }
 
         animate();
 
+        // Resize handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // Prevenir menu de contexto
         window.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Mobile controls (simplificado)
+        const joystick = document.getElementById('mobile-joystick');
+        let touchActive = false;
+        let touchStart = { x: 0, y: 0 };
+
+        joystick.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchActive = true;
+            const touch = e.touches[0];
+            touchStart.x = touch.clientX;
+            touchStart.y = touch.clientY;
+        });
+
+        joystick.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!touchActive) return;
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - touchStart.x;
+            const deltaY = touch.clientY - touchStart.y;
+            
+            // Mapear para teclas
+            keys.w = deltaY < -20;
+            keys.s = deltaY > 20;
+            keys.a = deltaX < -20;
+            keys.d = deltaX > 20;
+        });
+
+        joystick.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            touchActive = false;
+            keys.w = keys.a = keys.s = keys.d = false;
+        });
     </script>
 </body>
 </html>
