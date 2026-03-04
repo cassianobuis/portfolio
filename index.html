@@ -3,65 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java Portfolio | 3D Experience</title>
+    <title>Java Portfolio | 3D Game Experience</title>
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background-color: #050505; }
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; background-color: #000; }
         canvas { display: block; }
 
+        /* Interface Sobreposta */
         #ui-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; color: white; display: flex;
-            flex-direction: column; justify-content: space-between;
-            padding: 40px; box-sizing: border-box; z-index: 10;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            box-sizing: border-box;
+            z-index: 10; /* Garante que a UI fique acima do 3D */
         }
 
         .header h1 { 
-            margin: 0; font-size: 2.5rem; letter-spacing: 8px;
-            color: #f89820; text-shadow: 0 0 20px rgba(248, 152, 32, 0.8);
+            margin: 0; 
+            font-size: 3rem; 
+            text-transform: uppercase; 
+            letter-spacing: 5px;
+            color: #f89820; /* Cor Laranja Java */
+            text-shadow: 0 0 15px rgba(248, 152, 32, 0.6);
         }
 
+        .controls-hint {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            width: fit-content;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Card de Projeto/Habilidade */
         #info-card {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9); border: 1px solid #f89820;
-            padding: 30px; border-radius: 15px; text-align: center;
-            max-width: 350px; pointer-events: all; display: none;
-            backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(0,0,0,1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid #f89820;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            pointer-events: all;
+            display: none;
+            box-shadow: 0 0 50px rgba(248, 152, 32, 0.3);
         }
 
-        .active { display: block !important; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -45%); } to { opacity: 1; transform: translate(-50%, -50%); } }
-
+        #info-card h2 { color: #f89820; margin-top: 0; }
+        #info-card p { line-height: 1.6; color: #ccc; margin-bottom: 20px; }
+        
         button {
-            background: transparent; border: 1px solid #f89820; padding: 10px 20px;
-            color: #f89820; cursor: pointer; font-weight: bold; transition: 0.3s;
+            background: #f89820;
+            border: none;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        button:hover { background: #f89820; color: white; }
+        button:hover { background: #e38410; transform: scale(1.05); }
+
+        .active { display: block !important; }
     </style>
 </head>
 <body>
 
     <div id="ui-layer">
         <div class="header">
-            <h1>JAVA ARCHITECT</h1>
-            <p style="color: #888;">&lt; code / design / deploy &gt;</p>
+            <h1>JAVA DEVELOPER</h1>
+            <p>Fullstack & Cloud Specialist</p>
         </div>
 
         <div id="info-card">
-            <h2 id="title"></h2>
-            <p id="desc"></p>
+            <h2 id="title">Título</h2>
+            <p id="desc">Descrição detalhada do projeto ou habilidade.</p>
             <button onclick="closeInfo()">CONTINUAR EXPLORANDO</button>
         </div>
 
-        <div class="controls-hint" style="opacity: 0.6; font-size: 0.8rem;">
-            WASD PARA MOVER • APROXIME-SE DOS PILARES
+        <div class="controls-hint">
+            <b>COMANDOS:</b> Use <b>W, A, S, D</b> para navegar pela rede.
         </div>
     </div>
 
     <script type="importmap">
         {
             "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
             }
         }
     </script>
@@ -69,93 +108,119 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- SETUP ---
+        // --- CONFIGURAÇÃO DA CENA ---
         const scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x000000, 10, 45); // Neblina para profundidade
-        
+        // Adiciona neblina para dar profundidade
+        scene.fog = new THREE.Fog(0x000000, 10, 50);
+
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio); // Melhora a qualidade em telas de alta resolução
         document.body.appendChild(renderer.domElement);
 
-        // --- AMBIENTE (PARTÍCULAS) ---
-        const particlesGeo = new THREE.BufferGeometry();
-        const particlesCount = 1500;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i=0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 100;
-        }
-        particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMat = new THREE.PointsMaterial({ size: 0.05, color: 0xaaaaaa });
-        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
-        scene.add(particlesMesh);
+        // --- CHÃO (GRID ESTILO TRON/JAVA) ---
+        const gridHelper = new THREE.GridHelper(100, 50, 0xf89820, 0x222222);
+        scene.add(gridHelper);
 
-        // --- CHÃO ---
-        const grid = new THREE.GridHelper(200, 100, 0x444444, 0x111111);
-        scene.add(grid);
+        // --- ILUMINAÇÃO ---
+        // Aumentei um pouco a luz ambiente para as texturas ficarem visíveis
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+        
+        const light = new THREE.PointLight(0xffffff, 50); // Luz branca para não distorcer as cores das logos
+        light.position.set(0, 10, 0);
+        scene.add(light);
 
-        // --- JOGADOR ---
-        const playerGroup = new THREE.Group();
-        const playerGeo = new THREE.IcosahedronGeometry(0.6, 2);
+        // --- JOGADOR (ESFERA NEON) ---
+        const playerGeo = new THREE.SphereGeometry(0.5, 32, 32);
         const playerMat = new THREE.MeshStandardMaterial({ 
-            color: 0x00f2ff, emissive: 0x00f2ff, emissiveIntensity: 2, wireframe: true 
+            color: 0xffffff, 
+            emissive: 0x00f2ff,
+            emissiveIntensity: 2
         });
         const player = new THREE.Mesh(playerGeo, playerMat);
-        playerGroup.add(player);
-        
-        const playerLight = new THREE.PointLight(0x00f2ff, 15, 10);
-        playerGroup.add(playerLight);
-        
-        playerGroup.position.y = 0.8;
-        scene.add(playerGroup);
+        player.position.y = 0.5;
+        scene.add(player);
 
-        // --- DATA ---
-        const markers = [
-            { x: 8, z: -12, title: "Spring Boot", desc: "Expertise em APIs RESTful e Microserviços.", color: 0x6db33f },
-            { x: -10, z: -18, title: "AWS Cloud", desc: "Deploy e escalabilidade usando EC2 e S3.", color: 0xff9900 },
-            { x: 0, z: -25, title: "PostgreSQL", desc: "Modelagem de dados e performance queries.", color: 0x336791 }
+        // --- CARREGADOR DE TEXTURAS ---
+        const textureLoader = new THREE.TextureLoader();
+
+        // --- DATA DE PROJETOS E SKILLS (ATUALIZADO COM LOGOS) ---
+        // IMPORTANTE: Verifique se os caminhos 'logoUrl' estão corretos para o seu projeto!
+        const markersData = [
+            { x: 5, z: -10, title: "Java Expert", desc: "Domínio de Collections, Streams API, Multithreading e Spring Boot.", logoUrl: 'assets/java-logo.png' },
+            { x: -8, z: -15, title: "CSS3 & Design", desc: "Criação de interfaces modernas, responsivas e animações fluidas.", logoUrl: 'assets/css-logo.png' },
+            { x: 10, z: -20, title: "HTML5 Structure", desc: "Desenvolvimento semântico e acessível para a web moderna.", logoUrl: 'assets/html-logo.png' },
+            { x: -5, z: -5, title: "Node.js Backend", desc: "Construção de APIs escaláveis e de alta performance com Express.", logoUrl: 'assets/node-logo.png' },
+            { x: 0, z: -25, title: "Spring Boot API", desc: "Desenvolvimento robusto de microserviços com Java e ecossistema Spring.", logoUrl: 'assets/springboot-logo.png' }
         ];
 
         const markerMeshes = [];
-        markers.forEach(data => {
-            const mesh = new THREE.Mesh(
-                new THREE.OctahedronGeometry(1, 0),
-                new THREE.MeshStandardMaterial({ color: data.color, emissive: data.color, emissiveIntensity: 0.5 })
+
+        // Geometria comum para todos os totens (um cubo)
+        // Se preferir algo mais "flat", use: new THREE.PlaneGeometry(2, 2);
+        const geometry = new THREE.BoxGeometry(2, 2, 2);
+
+        markersData.forEach(data => {
+            // Carrega a textura assincronamente
+            const texture = textureLoader.load(data.logoUrl, 
+                // Função chamada quando a textura carrega com sucesso
+                (tex) => {
+                    console.log(`Textura carregada: ${data.logoUrl}`);
+                },
+                undefined,
+                // Função chamada em caso de erro
+                (err) => {
+                    console.error(`Erro ao carregar textura: ${data.logoUrl}. Verifique o caminho.`);
+                }
             );
-            mesh.position.set(data.x, 2, data.z);
-            mesh.userData = data;
+            
+            // Criar o material com a textura carregada
+            const material = new THREE.MeshStandardMaterial({ 
+                map: texture, // Define a imagem como textura
+                transparent: true, // Importante se a logo tiver fundo transparente
+                side: THREE.DoubleSide // Garante que a logo seja vista de trás se usar PlaneGeometry
+            });
+
+            // Criar a Mesh (o objeto 3D)
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(data.x, 2, data.z); // Um pouco mais alto para flutuar melhor
+            mesh.userData = data; // Guarda os dados para o card
             scene.add(mesh);
             markerMeshes.push(mesh);
 
-            const light = new THREE.PointLight(data.color, 10, 8);
-            light.position.set(data.x, 2, data.z);
-            scene.add(light);
+            // Luz em cima do totem (branca para realçar a logo)
+            const pLight = new THREE.PointLight(0xffffff, 10, 8);
+            pLight.position.set(data.x, 5, data.z);
+            scene.add(pLight);
         });
 
-        // --- CONTROLES ---
+        // --- LÓGICA DE MOVIMENTO ---
         const keys = {};
-        let cardOpen = false;
         window.onkeydown = (e) => keys[e.key.toLowerCase()] = true;
         window.onkeyup = (e) => keys[e.key.toLowerCase()] = false;
+
+        const infoCard = document.getElementById('info-card');
+        let cardOpen = false;
 
         function update() {
             if (cardOpen) return;
 
-            const speed = 0.12;
-            if (keys['w']) playerGroup.position.z -= speed;
-            if (keys['s']) playerGroup.position.z += speed;
-            if (keys['a']) playerGroup.position.x -= speed;
-            if (keys['d']) playerGroup.position.x += speed;
+            const speed = 0.15;
+            if (keys['w']) player.position.z -= speed;
+            if (keys['s']) player.position.z += speed;
+            if (keys['a']) player.position.x -= speed;
+            if (keys['d']) player.position.x += speed;
 
-            // Camera follow (Suave)
-            const targetCamPos = new THREE.Vector3(playerGroup.position.x, 6, playerGroup.position.z + 10);
-            camera.position.lerp(targetCamPos, 0.05);
-            camera.lookAt(playerGroup.position);
+            // Câmera segue o jogador suavemente (lerp)
+            camera.position.lerp(new THREE.Vector3(player.position.x, player.position.y + 8, player.position.z + 12), 0.1);
+            camera.lookAt(player.position);
 
-            // Colisão/Interação
+            // Detecção de Proximidade (aumentei a distância para 3.5)
             markerMeshes.forEach(m => {
-                if (playerGroup.position.distanceTo(m.position) < 2) {
+                const distance = player.position.distanceTo(m.position);
+                if (distance < 3.5) {
                     showInfo(m.userData);
                 }
             });
@@ -164,27 +229,26 @@
         function showInfo(data) {
             document.getElementById('title').innerText = data.title;
             document.getElementById('desc').innerText = data.desc;
-            document.getElementById('info-card').classList.add('active');
+            infoCard.classList.add('active');
             cardOpen = true;
         }
 
         window.closeInfo = () => {
-            document.getElementById('info-card').classList.remove('active');
-            playerGroup.position.z += 3;
+            infoCard.classList.remove('active');
+            // Empurra o jogador um pouco para trás para não reativar o card instantaneamente
+            player.position.z += 3;
             cardOpen = false;
         };
 
+        // --- RENDER LOOP ---
         function animate() {
             requestAnimationFrame(animate);
             update();
             
-            // Animações Visuais
-            player.rotation.y += 0.01;
-            player.rotation.z += 0.01;
-            
+            // Animar totens (flutuar e girar)
             markerMeshes.forEach((m, i) => {
-                m.rotation.y -= 0.02;
-                m.position.y = 2 + Math.sin(Date.now() * 0.002 + i) * 0.5;
+                m.rotation.y += 0.01; // Gira devagar para a logo ser legível
+                m.position.y = 2 + Math.sin(Date.now() * 0.002 + i) * 0.3; // Flutuação suave
             });
 
             renderer.render(scene, camera);
@@ -192,6 +256,7 @@
 
         animate();
 
+        // Ajuste de Janela
         window.onresize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
