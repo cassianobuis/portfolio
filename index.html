@@ -3,103 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java Portfolio | 3D Game Experience</title>
+    <title>Java Portfolio | 3D Experience</title>
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Roboto, sans-serif; background-color: #000; }
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background-color: #050505; }
         canvas { display: block; }
 
-        /* Interface Sobreposta */
         #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 40px;
-            box-sizing: border-box;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; color: white; display: flex;
+            flex-direction: column; justify-content: space-between;
+            padding: 40px; box-sizing: border-box; z-index: 10;
         }
 
         .header h1 { 
-            margin: 0; 
-            font-size: 3rem; 
-            text-transform: uppercase; 
-            letter-spacing: 5px;
-            color: #f89820; /* Cor Laranja Java */
-            text-shadow: 0 0 15px rgba(248, 152, 32, 0.6);
+            margin: 0; font-size: 2.5rem; letter-spacing: 8px;
+            color: #f89820; text-shadow: 0 0 20px rgba(248, 152, 32, 0.8);
         }
 
-        .controls-hint {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            width: fit-content;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        /* Card de Projeto/Habilidade */
         #info-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(10, 10, 10, 0.95);
-            border: 2px solid #f89820;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            pointer-events: all;
-            display: none;
-            box-shadow: 0 0 50px rgba(248, 152, 32, 0.3);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9); border: 1px solid #f89820;
+            padding: 30px; border-radius: 15px; text-align: center;
+            max-width: 350px; pointer-events: all; display: none;
+            backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(0,0,0,1);
         }
 
-        #info-card h2 { color: #f89820; margin-top: 0; }
-        #info-card p { line-height: 1.6; color: #ccc; }
-        
+        .active { display: block !important; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -45%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+
         button {
-            background: #f89820;
-            border: none;
-            padding: 12px 30px;
-            color: white;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
+            background: transparent; border: 1px solid #f89820; padding: 10px 20px;
+            color: #f89820; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
-        button:hover { background: #e38410; transform: scale(1.05); }
-
-        .active { display: block !important; }
+        button:hover { background: #f89820; color: white; }
     </style>
 </head>
 <body>
 
     <div id="ui-layer">
         <div class="header">
-            <h1>JAVA DEVELOPER</h1>
-            <p>Fullstack & Cloud Specialist</p>
+            <h1>JAVA ARCHITECT</h1>
+            <p style="color: #888;">&lt; code / design / deploy &gt;</p>
         </div>
 
         <div id="info-card">
-            <h2 id="title">Título</h2>
-            <p id="desc">Descrição detalhada do projeto ou habilidade em Java.</p>
+            <h2 id="title"></h2>
+            <p id="desc"></p>
             <button onclick="closeInfo()">CONTINUAR EXPLORANDO</button>
         </div>
 
-        <div class="controls-hint">
-            <b>COMANDOS:</b> Use <b>W, A, S, D</b> para navegar pela rede.
+        <div class="controls-hint" style="opacity: 0.6; font-size: 0.8rem;">
+            WASD PARA MOVER • APROXIME-SE DOS PILARES
         </div>
     </div>
 
     <script type="importmap">
         {
             "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
             }
         }
     </script>
@@ -107,86 +69,93 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- CONFIGURAÇÃO DA CENA ---
+        // --- SETUP ---
         const scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0x000000, 10, 45); // Neblina para profundidade
+        
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // --- CHÃO (GRID ESTILO TRON/JAVA) ---
-        const gridHelper = new THREE.GridHelper(100, 50, 0xf89820, 0x222222);
-        scene.add(gridHelper);
+        // --- AMBIENTE (PARTÍCULAS) ---
+        const particlesGeo = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i=0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+        }
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMat = new THREE.PointsMaterial({ size: 0.05, color: 0xaaaaaa });
+        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particlesMesh);
 
-        // --- ILUMINAÇÃO ---
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const light = new THREE.PointLight(0xf89820, 100);
-        light.position.set(0, 5, 0);
-        scene.add(light);
+        // --- CHÃO ---
+        const grid = new THREE.GridHelper(200, 100, 0x444444, 0x111111);
+        scene.add(grid);
 
-        // --- JOGADOR (ESFERA NEON) ---
-        const playerGeo = new THREE.SphereGeometry(0.5, 32, 32);
+        // --- JOGADOR ---
+        const playerGroup = new THREE.Group();
+        const playerGeo = new THREE.IcosahedronGeometry(0.6, 2);
         const playerMat = new THREE.MeshStandardMaterial({ 
-            color: 0xffffff, 
-            emissive: 0x00f2ff,
-            emissiveIntensity: 2
+            color: 0x00f2ff, emissive: 0x00f2ff, emissiveIntensity: 2, wireframe: true 
         });
         const player = new THREE.Mesh(playerGeo, playerMat);
-        player.position.y = 0.5;
-        scene.add(player);
+        playerGroup.add(player);
+        
+        const playerLight = new THREE.PointLight(0x00f2ff, 15, 10);
+        playerGroup.add(playerLight);
+        
+        playerGroup.position.y = 0.8;
+        scene.add(playerGroup);
 
-        // --- DATA DE PROJETOS E SKILLS ---
+        // --- DATA ---
         const markers = [
-            { x: 5, z: -10, title: "Spring Boot API", desc: "Desenvolvimento de microserviços escaláveis com autenticação JWT e Docker.", color: 0xed1c24 },
-            { x: -8, z: -15, title: "Java Core", desc: "Domínio de Collections, Streams API, Multithreading e Padrões de Projeto.", color: 0x5382a1 },
-            { x: 10, z: -20, title: "Banco de Dados", desc: "Integração robusta com Hibernate, JPA e PostgreSQL.", color: 0x00758f },
-            { x: -5, z: -5, title: "Cloud AWS", desc: "Deploy de aplicações Java em instâncias EC2 e uso de S3.", color: 0xff9900 }
+            { x: 8, z: -12, title: "Spring Boot", desc: "Expertise em APIs RESTful e Microserviços.", color: 0x6db33f },
+            { x: -10, z: -18, title: "AWS Cloud", desc: "Deploy e escalabilidade usando EC2 e S3.", color: 0xff9900 },
+            { x: 0, z: -25, title: "PostgreSQL", desc: "Modelagem de dados e performance queries.", color: 0x336791 }
         ];
 
         const markerMeshes = [];
-
         markers.forEach(data => {
-            // Criar um "Totem" para cada projeto
-            const geometry = new THREE.BoxGeometry(1.5, 3, 1.5);
-            const material = new THREE.MeshStandardMaterial({ color: data.color, metalness: 0.7, roughness: 0.2 });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(data.x, 1.5, data.z);
+            const mesh = new THREE.Mesh(
+                new THREE.OctahedronGeometry(1, 0),
+                new THREE.MeshStandardMaterial({ color: data.color, emissive: data.color, emissiveIntensity: 0.5 })
+            );
+            mesh.position.set(data.x, 2, data.z);
             mesh.userData = data;
             scene.add(mesh);
             markerMeshes.push(mesh);
 
-            // Luz em cima do totem
-            const pLight = new THREE.PointLight(data.color, 10, 5);
-            pLight.position.set(data.x, 4, data.z);
-            scene.add(pLight);
+            const light = new THREE.PointLight(data.color, 10, 8);
+            light.position.set(data.x, 2, data.z);
+            scene.add(light);
         });
 
-        // --- LÓGICA DE MOVIMENTO ---
+        // --- CONTROLES ---
         const keys = {};
+        let cardOpen = false;
         window.onkeydown = (e) => keys[e.key.toLowerCase()] = true;
         window.onkeyup = (e) => keys[e.key.toLowerCase()] = false;
-
-        const infoCard = document.getElementById('info-card');
-        let cardOpen = false;
 
         function update() {
             if (cardOpen) return;
 
-            const speed = 0.15;
-            if (keys['w']) player.position.z -= speed;
-            if (keys['s']) player.position.z += speed;
-            if (keys['a']) player.position.x -= speed;
-            if (keys['d']) player.position.x += speed;
+            const speed = 0.12;
+            if (keys['w']) playerGroup.position.z -= speed;
+            if (keys['s']) playerGroup.position.z += speed;
+            if (keys['a']) playerGroup.position.x -= speed;
+            if (keys['d']) playerGroup.position.x += speed;
 
-            // Câmera segue o jogador suavemente
-            camera.position.lerp(new THREE.Vector3(player.position.x, player.position.y + 8, player.position.z + 12), 0.1);
-            camera.lookAt(player.position);
+            // Camera follow (Suave)
+            const targetCamPos = new THREE.Vector3(playerGroup.position.x, 6, playerGroup.position.z + 10);
+            camera.position.lerp(targetCamPos, 0.05);
+            camera.lookAt(playerGroup.position);
 
-            // Detecção de Proximidade
+            // Colisão/Interação
             markerMeshes.forEach(m => {
-                const distance = player.position.distanceTo(m.position);
-                if (distance < 2.5) {
+                if (playerGroup.position.distanceTo(m.position) < 2) {
                     showInfo(m.userData);
                 }
             });
@@ -195,26 +164,27 @@
         function showInfo(data) {
             document.getElementById('title').innerText = data.title;
             document.getElementById('desc').innerText = data.desc;
-            infoCard.classList.add('active');
+            document.getElementById('info-card').classList.add('active');
             cardOpen = true;
         }
 
         window.closeInfo = () => {
-            infoCard.classList.remove('active');
-            // Empurra o jogador um pouco para trás para não reativar o card instantaneamente
-            player.position.z += 2;
+            document.getElementById('info-card').classList.remove('active');
+            playerGroup.position.z += 3;
             cardOpen = false;
         };
 
-        // --- RENDER LOOP ---
         function animate() {
             requestAnimationFrame(animate);
             update();
             
-            // Animar totens (flutuar e girar)
+            // Animações Visuais
+            player.rotation.y += 0.01;
+            player.rotation.z += 0.01;
+            
             markerMeshes.forEach((m, i) => {
-                m.rotation.y += 0.02;
-                m.position.y = 1.5 + Math.sin(Date.now() * 0.002 + i) * 0.2;
+                m.rotation.y -= 0.02;
+                m.position.y = 2 + Math.sin(Date.now() * 0.002 + i) * 0.5;
             });
 
             renderer.render(scene, camera);
@@ -222,7 +192,6 @@
 
         animate();
 
-        // Ajuste de Janela
         window.onresize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
