@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java Realm | 3D Portfolio</title>
+    <title>Java Realm | 3D Portfolio Adventure</title>
     <style>
         body { margin: 0; overflow: hidden; font-family: 'Segoe UI', 'Arial', sans-serif; }
         canvas { display: block; }
         
-        /* Interface elegante e mais imersiva */
         #ui {
             position: absolute;
             top: 0;
@@ -127,6 +126,56 @@
         }
 
         .active { display: block !important; }
+
+        #objective-counter {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 1px solid #f89820;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #f89820;
+            box-shadow: 0 0 30px rgba(248,152,32,0.3);
+            pointer-events: none;
+        }
+
+        #collectible-counter {
+            position: absolute;
+            bottom: 100px;
+            right: 40px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 1px solid #00ffff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ffff;
+            box-shadow: 0 0 30px rgba(0,255,255,0.3);
+            pointer-events: none;
+        }
+
+        #message-toast {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(248,152,32,0.9);
+            color: #111;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 0 30px #f89820;
+        }
     </style>
 </head>
 <body>
@@ -137,8 +186,20 @@
             <p>fullstack • cloud • architecture</p>
         </div>
         <div class="controls-panel">
-            <b>✦ W A S D</b> para navegar entre as skills
+            <b>✦ W A S D</b> para explorar | <b style="color:#00ffff">✦ Colete cubos de código</b>
         </div>
+    </div>
+
+    <div id="objective-counter">
+        🎯 Skills desbloqueadas: <span id="skills-collected">0</span>/5
+    </div>
+
+    <div id="collectible-counter">
+        💎 Cubos de código: <span id="cubes-collected">0</span>/8
+    </div>
+
+    <div id="message-toast">
+        ⚡ Mensagem
     </div>
 
     <div id="info-card">
@@ -255,13 +316,14 @@
         ];
 
         const markerMeshes = [];
+        let skillsCollected = 0;
+        let cubesCollected = 0;
 
         // Função para criar material com textura
         function createLogoMaterial(logoUrl, fallbackColor) {
             return new Promise((resolve) => {
                 loader.load(logoUrl, 
                     (texture) => {
-                        // Textura carregada com sucesso
                         const material = new THREE.MeshStandardMaterial({ 
                             map: texture,
                             emissive: 0x222222,
@@ -272,8 +334,7 @@
                     },
                     undefined,
                     (error) => {
-                        console.warn(`Erro ao carregar ${logoUrl}, usando fallback colorido.`, error);
-                        // Fallback: material colorido
+                        console.warn(`Erro ao carregar ${logoUrl}, usando fallback colorido.`);
                         const material = new THREE.MeshStandardMaterial({ 
                             color: fallbackColor,
                             emissive: 0x222222,
@@ -285,21 +346,18 @@
             });
         }
 
-        // Cores de fallback para cada tecnologia
         const fallbackColors = [0xf89820, 0x264de4, 0xe34c26, 0x68a063, 0x6db33f];
 
         // Criar todos os totens
         await Promise.all(markersData.map(async (data, index) => {
             const material = await createLogoMaterial(data.logoUrl, fallbackColors[index]);
             
-            // Cria um "totem" em forma de placa retangular
             const geom = new THREE.BoxGeometry(2.8, 3.2, 0.6);
             const mesh = new THREE.Mesh(geom, material);
             mesh.position.set(data.x, 1.8, data.z);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
             
-            // Adiciona uma borda brilhante
             const edges = new THREE.EdgesGeometry(geom);
             const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xf89820 }));
             mesh.add(line);
@@ -308,11 +366,118 @@
             scene.add(mesh);
             markerMeshes.push(mesh);
 
-            // Luz pontual colorida em cada totem
             const pointLight = new THREE.PointLight(0xf89820, 1.5, 15);
             pointLight.position.set(data.x, 3.5, data.z);
             scene.add(pointLight);
         }));
+
+        // --- NOVOS ELEMENTOS INTERATIVOS ---
+
+        // 1. CUBOS COLECIONÁVEIS (Códigos)
+        const collectibles = [];
+        const collectiblePositions = [
+            { x: 3, z: -5 }, { x: -4, z: -10 }, { x: 8, z: -15 }, { x: -6, z: -22 },
+            { x: 12, z: -18 }, { x: -10, z: -25 }, { x: 4, z: -30 }, { x: -3, z: -12 }
+        ];
+
+        collectiblePositions.forEach((pos, i) => {
+            const geom = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: 0x00ffff,
+                emissive: 0x0088aa,
+                emissiveIntensity: 2
+            });
+            const cube = new THREE.Mesh(geom, mat);
+            cube.position.set(pos.x, 0.5, pos.z);
+            cube.castShadow = true;
+            cube.receiveShadow = true;
+            
+            // Adiciona rotação inicial
+            cube.userData = { id: i, collected: false, floatOffset: Math.random() * 100 };
+            scene.add(cube);
+            collectibles.push(cube);
+        });
+
+        // 2. ÁRVORES DE CONHECIMENTO (Decoração interativa)
+        const treePositions = [
+            { x: 15, z: -5 }, { x: -15, z: -10 }, { x: 12, z: -30 }, { x: -12, z: -25 }
+        ];
+
+        treePositions.forEach(pos => {
+            // Tronco
+            const trunkGeo = new THREE.CylinderGeometry(0.5, 0.7, 2);
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            trunk.position.set(pos.x, 1, pos.z);
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            scene.add(trunk);
+
+            // Copa (várias esferas verdes)
+            for (let i = 0; i < 5; i++) {
+                const leafGeo = new THREE.SphereGeometry(0.8, 8);
+                const leafMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71, emissive: 0x0a3300 });
+                const leaf = new THREE.Mesh(leafGeo, leafMat);
+                leaf.position.set(
+                    pos.x + (Math.random() - 0.5) * 1.5,
+                    2.2 + Math.random() * 1.2,
+                    pos.z + (Math.random() - 0.5) * 1.5
+                );
+                leaf.castShadow = true;
+                leaf.receiveShadow = true;
+                scene.add(leaf);
+            }
+        });
+
+        // 3. PORTAL MISTERIOSO (no centro)
+        const portalBaseGeo = new THREE.CylinderGeometry(2, 2, 0.5, 32);
+        const portalBaseMat = new THREE.MeshStandardMaterial({ color: 0x333333, emissive: 0x111122 });
+        const portalBase = new THREE.Mesh(portalBaseGeo, portalBaseMat);
+        portalBase.position.set(0, 0.25, -35);
+        portalBase.receiveShadow = true;
+        scene.add(portalBase);
+
+        const portalRingGeo = new THREE.TorusGeometry(1.5, 0.2, 16, 64);
+        const portalRingMat = new THREE.MeshStandardMaterial({ color: 0xff44aa, emissive: 0x440022 });
+        const portalRing = new THREE.Mesh(portalRingGeo, portalRingMat);
+        portalRing.rotation.x = Math.PI / 2;
+        portalRing.position.set(0, 1.2, -35);
+        portalRing.castShadow = true;
+        scene.add(portalRing);
+
+        // 4. PLACAS DE INFORMAÇÃO
+        const signData = [
+            { x: -20, z: 0, text: "ÁREA DE\nTESTES" },
+            { x: 20, z: -20, text: "CAVERNA\nDOS DADOS" }
+        ];
+
+        signData.forEach(sign => {
+            const postGeo = new THREE.CylinderGeometry(0.2, 0.2, 2);
+            const postMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+            const post = new THREE.Mesh(postGeo, postMat);
+            post.position.set(sign.x, 1, sign.z);
+            post.castShadow = true;
+            post.receiveShadow = true;
+            scene.add(post);
+
+            const boardGeo = new THREE.BoxGeometry(2, 1, 0.2);
+            const boardMat = new THREE.MeshStandardMaterial({ color: 0xf89820, emissive: 0x331100 });
+            const board = new THREE.Mesh(boardGeo, boardMat);
+            board.position.set(sign.x, 2.2, sign.z);
+            board.castShadow = true;
+            board.receiveShadow = true;
+            
+            // Adiciona texto simulado com cubinhos (representação)
+            for (let i = 0; i < 3; i++) {
+                const dotGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+                const dotMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+                const dot = new THREE.Mesh(dotGeo, dotMat);
+                dot.position.set(sign.x - 0.5 + i * 0.5, 2.2, sign.z + 0.11);
+                scene.add(dot);
+            }
+            
+            scene.add(board);
+        });
 
         // --- EFEITO ESTRELAS ---
         const starsGeo = new THREE.BufferGeometry();
@@ -328,7 +493,7 @@
         const stars = new THREE.Points(starsGeo, starsMat);
         scene.add(stars);
 
-        // --- MOVIMENTO ---
+        // --- MOVIMENTO E INTERAÇÃO ---
         const keys = { w: false, a: false, s: false, d: false };
         window.addEventListener('keydown', (e) => { const k = e.key.toLowerCase(); if (['w','a','s','d'].includes(k)) keys[k] = true; });
         window.addEventListener('keyup', (e) => { const k = e.key.toLowerCase(); if (['w','a','s','d'].includes(k)) keys[k] = false; });
@@ -336,12 +501,37 @@
         const infoCard = document.getElementById('info-card');
         let cardOpen = false;
         let currentTarget = null;
+        let messageTimeout = null;
+
+        function showMessage(msg) {
+            const toast = document.getElementById('message-toast');
+            toast.style.opacity = 1;
+            toast.innerHTML = msg;
+            
+            if (messageTimeout) clearTimeout(messageTimeout);
+            messageTimeout = setTimeout(() => {
+                toast.style.opacity = 0;
+            }, 2000);
+        }
 
         window.showInfo = (data) => {
             document.getElementById('title').innerText = data.title;
             document.getElementById('desc').innerText = data.desc;
             infoCard.classList.add('active');
             cardOpen = true;
+            
+            // Incrementa contador de skills (apenas se não foi coletada antes)
+            if (!data.collected) {
+                data.collected = true;
+                skillsCollected++;
+                document.getElementById('skills-collected').innerText = skillsCollected;
+                showMessage(`✨ Skill desbloqueada: ${data.title}`);
+                
+                // Verifica se todas as skills foram coletadas
+                if (skillsCollected === markerMeshes.length) {
+                    showMessage("🎉 PARABÉNS! Todas as skills foram desbloqueadas!");
+                }
+            }
         };
 
         window.closeInfo = () => {
@@ -366,7 +556,7 @@
                 if (keys.d) player.position.x += speed;
 
                 player.position.x = Math.max(-25, Math.min(25, player.position.x));
-                player.position.z = Math.max(-35, Math.min(10, player.position.z));
+                player.position.z = Math.max(-38, Math.min(10, player.position.z));
             }
 
             const targetCamPos = new THREE.Vector3(
@@ -377,6 +567,7 @@
             camera.position.lerp(targetCamPos, 0.08);
             camera.lookAt(player.position);
 
+            // Detecção de proximidade para totens
             let closestDist = 6;
             let closestMesh = null;
             markerMeshes.forEach(m => {
@@ -392,10 +583,39 @@
                 showInfo(closestMesh.userData);
             }
 
+            // Detecção de coleta dos cubos
+            collectibles.forEach(cube => {
+                if (!cube.userData.collected) {
+                    const dist = player.position.distanceTo(cube.position);
+                    if (dist < 2) {
+                        cube.userData.collected = true;
+                        scene.remove(cube);
+                        cubesCollected++;
+                        document.getElementById('cubes-collected').innerText = cubesCollected;
+                        showMessage(`💾 Código coletado! (${cubesCollected}/8)`);
+                        
+                        if (cubesCollected === collectibles.length) {
+                            showMessage("🌟 VOCÊ COLETOU TODOS OS CÓDIGOS! Acesso liberado!");
+                        }
+                    }
+                }
+            });
+
+            // Animações
             markerMeshes.forEach((m, i) => {
                 m.rotation.y += 0.005;
                 m.position.y = 1.8 + Math.sin(Date.now() * 0.0025 + i) * 0.3;
             });
+
+            collectibles.forEach((cube, i) => {
+                cube.rotation.x += 0.02;
+                cube.rotation.y += 0.03;
+                cube.position.y = 0.5 + Math.sin(Date.now() * 0.003 + i) * 0.2;
+            });
+
+            // Animar portal
+            portalRing.rotation.y += 0.01;
+            portalRing.rotation.z += 0.005;
 
             stars.rotation.y += 0.0001;
 
