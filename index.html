@@ -251,7 +251,7 @@
     </style>
 </head>
 <body>
-    <div id="info">⚡ Java Realm - Currículo Interativo</div>
+    <div id="info">🐍 Java Realm - Currículo Interativo 3D (A Cobra Cresce com Conquistas!)</div>
     
     <div id="stats">
         <div class="stat-box achievements">🏆 <span id="achievements-count">0</span>/10</div>
@@ -259,15 +259,15 @@
     </div>
 
     <div id="controls">
-        <span>WASD</span> para mover | <span>ESC</span> fechar janela
+        <span>WASD</span> para mover a cobra | <span>ESC</span> fechar janela
     </div>
 
     <div id="legend">
-        <div class="legend-item"><span class="color-dot" style="background: #f89820;"></span> Skills</div>
-        <div class="legend-item"><span class="color-dot" style="background: #00ffff;"></span> Projetos</div>
-        <div class="legend-item"><span class="color-dot" style="background: #ff44aa;"></span> Formação</div>
-        <div class="legend-item"><span class="color-dot" style="background: #2ecc71;"></span> Experiência</div>
-        <div class="legend-item"><span class="color-dot" style="background: #ff0000;"></span> Contato</div>
+        <div class="legend-item"><span class="color-dot" style="background: #f89820;"></span> ⚡ Skills</div>
+        <div class="legend-item"><span class="color-dot" style="background: #00ffff;"></span> 📁 Projetos</div>
+        <div class="legend-item"><span class="color-dot" style="background: #ff44aa;"></span> 🎓 Formação</div>
+        <div class="legend-item"><span class="color-dot" style="background: #2ecc71;"></span> 💼 Experiência</div>
+        <div class="legend-item"><span class="color-dot" style="background: #ff0000;"></span> 📫 Contato</div>
     </div>
 
     <div id="info-card">
@@ -323,14 +323,6 @@
         directionalLight.shadow.camera.bottom = -20;
         scene.add(directionalLight);
 
-        const pointLight1 = new THREE.PointLight(0x4466ff, 0.5);
-        pointLight1.position.set(-5, 5, 10);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0xff8844, 0.5);
-        pointLight2.position.set(5, 5, -10);
-        scene.add(pointLight2);
-
         // Chão
         const groundGeometry = new THREE.CircleGeometry(60, 32);
         const groundMaterial = new THREE.MeshStandardMaterial({ 
@@ -350,38 +342,134 @@
         gridHelper.position.y = 0.01;
         scene.add(gridHelper);
 
-        // Jogador (esfera flutuante)
-        const playerGeometry = new THREE.SphereGeometry(0.8, 32, 32);
-        const playerMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x00aaff,
-            emissive: 0x004466,
-            emissiveIntensity: 1.5
-        });
-        const player = new THREE.Mesh(playerGeometry, playerMaterial);
-        player.position.y = 1;
-        player.castShadow = true;
-        player.receiveShadow = true;
-        scene.add(player);
-
-        // Partículas do jogador
-        const particleCount = 12;
-        const particleGeometry = new THREE.BufferGeometry();
-        const particlePositions = new Float32Array(particleCount * 3);
-        for (let i = 0; i < particleCount; i++) {
-            const angle = (i / particleCount) * Math.PI * 2;
-            particlePositions[i*3] = Math.cos(angle) * 1.5;
-            particlePositions[i*3+1] = Math.sin(angle) * 0.5;
-            particlePositions[i*3+2] = Math.sin(angle) * 1.5;
+        // ===== COBRA (cresce com conquistas) =====
+        const snakeGroup = new THREE.Group();
+        
+        // Tamanho base da cobra
+        let snakeSize = 1.0;
+        const maxSnakeSize = 2.5;
+        
+        // Função para atualizar o tamanho da cobra
+        function updateSnakeSize() {
+            // Calcula o fator de escala baseado nas conquistas
+            // Mínimo 1.0, máximo 2.5
+            const scaleFactor = 1.0 + (achievementsCount / markers.length) * 1.5;
+            snakeSize = Math.min(scaleFactor, maxSnakeSize);
+            
+            // Aplica escala a todos os elementos da cobra
+            snakeGroup.children.forEach(child => {
+                if (child.geometry) {
+                    // Para elementos esféricos, ajustamos o raio
+                    if (child.geometry.type === 'SphereGeometry') {
+                        child.geometry.radius = child.userData.baseRadius * snakeSize;
+                        child.geometry.verticesNeedUpdate = true;
+                    }
+                    // Para cones (língua e cauda)
+                    else if (child.geometry.type === 'ConeGeometry') {
+                        child.geometry.radius = child.userData.baseRadius * snakeSize;
+                        child.geometry.height = child.userData.baseHeight * snakeSize;
+                        child.geometry.verticesNeedUpdate = true;
+                    }
+                }
+            });
+            
+            // Ajusta posições relativas dos segmentos
+            bodySegments.forEach((segment, index) => {
+                if (segment.userData.baseZ) {
+                    segment.position.z = segment.userData.baseZ * snakeSize;
+                }
+            });
+            
+            // Posição da cauda
+            if (tail.userData.baseZ) {
+                tail.position.z = tail.userData.baseZ * snakeSize;
+            }
+            
+            showToast(`🐍 Cobra cresceu! Tamanho: ${(snakeSize * 100).toFixed(0)}%`);
         }
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-        const particleMaterial = new THREE.PointsMaterial({ 
-            color: 0x88ccff, 
-            size: 0.15,
-            transparent: true,
-            blending: THREE.AdditiveBlending
+        
+        // Cabeça da cobra
+        const headGeo = new THREE.SphereGeometry(0.8, 32, 32);
+        const headMat = new THREE.MeshStandardMaterial({ 
+            color: 0x00ff88,
+            emissive: 0x004422,
+            emissiveIntensity: 1
         });
-        const particles = new THREE.Points(particleGeometry, particleMaterial);
-        player.add(particles);
+        const head = new THREE.Mesh(headGeo, headMat);
+        head.position.y = 0;
+        head.castShadow = true;
+        head.receiveShadow = true;
+        head.userData = { baseRadius: 0.8 };
+        snakeGroup.add(head);
+
+        // Olhos
+        const eyeGeo = new THREE.SphereGeometry(0.15, 16, 16);
+        const eyeMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        
+        const eye1 = new THREE.Mesh(eyeGeo, eyeMat);
+        eye1.position.set(0.4, 0.2, 0.7);
+        eye1.userData = { baseRadius: 0.15 };
+        snakeGroup.add(eye1);
+        
+        const eye2 = new THREE.Mesh(eyeGeo, eyeMat);
+        eye2.position.set(-0.4, 0.2, 0.7);
+        eye2.userData = { baseRadius: 0.15 };
+        snakeGroup.add(eye2);
+        
+        // Pupilas
+        const pupilGeo = new THREE.SphereGeometry(0.07, 8, 8);
+        const pupilMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        
+        const pupil1 = new THREE.Mesh(pupilGeo, pupilMat);
+        pupil1.position.set(0.45, 0.15, 0.8);
+        pupil1.userData = { baseRadius: 0.07 };
+        snakeGroup.add(pupil1);
+        
+        const pupil2 = new THREE.Mesh(pupilGeo, pupilMat);
+        pupil2.position.set(-0.45, 0.15, 0.8);
+        pupil2.userData = { baseRadius: 0.07 };
+        snakeGroup.add(pupil2);
+
+        // Língua
+        const tongueGeo = new THREE.ConeGeometry(0.1, 0.4, 8);
+        const tongueMat = new THREE.MeshStandardMaterial({ color: 0xff3333 });
+        const tongue = new THREE.Mesh(tongueGeo, tongueMat);
+        tongue.position.set(0, -0.1, 1.1);
+        tongue.rotation.x = 0.3;
+        tongue.userData = { baseRadius: 0.1, baseHeight: 0.4 };
+        snakeGroup.add(tongue);
+
+        // Corpo (segmentos)
+        const bodySegments = [];
+        const segmentCount = 5;
+        for (let i = 1; i <= segmentCount; i++) {
+            const segmentGeo = new THREE.SphereGeometry(0.7, 24, 24);
+            const segmentMat = new THREE.MeshStandardMaterial({ 
+                color: 0x00cc66,
+                emissive: 0x003311
+            });
+            const segment = new THREE.Mesh(segmentGeo, segmentMat);
+            segment.position.set(0, 0, -i * 0.9);
+            segment.castShadow = true;
+            segment.receiveShadow = true;
+            segment.userData = { baseRadius: 0.7, baseZ: -i * 0.9 };
+            snakeGroup.add(segment);
+            bodySegments.push(segment);
+        }
+
+        // Cauda
+        const tailGeo = new THREE.ConeGeometry(0.5, 1, 8);
+        const tailMat = new THREE.MeshStandardMaterial({ color: 0x009944 });
+        const tail = new THREE.Mesh(tailGeo, tailMat);
+        tail.position.set(0, 0, -5.5);
+        tail.rotation.x = 0.2;
+        tail.castShadow = true;
+        tail.receiveShadow = true;
+        tail.userData = { baseRadius: 0.5, baseHeight: 1, baseZ: -5.5 };
+        snakeGroup.add(tail);
+
+        snakeGroup.position.y = 0.8;
+        scene.add(snakeGroup);
 
         // Estrelas de fundo
         const starsGeometry = new THREE.BufferGeometry();
@@ -397,12 +485,13 @@
         const stars = new THREE.Points(starsGeometry, starsMaterial);
         scene.add(stars);
 
-        // Dados do currículo
+        // Dados do currículo com SÍMBOLOS
         const curriculumData = [
-            // Skills (laranja)
+            // Skills (laranja) - símbolo ⚡
             { 
                 type: 'skill',
                 color: 0xf89820,
+                symbol: '⚡',
                 position: [6, 0, -12],
                 title: "JAVA",
                 desc: "Especialista em Java",
@@ -416,6 +505,7 @@
             { 
                 type: 'skill',
                 color: 0xf89820,
+                symbol: '⚡',
                 position: [-7, 0, -18],
                 title: "SPRING BOOT",
                 desc: "Framework principal",
@@ -429,6 +519,7 @@
             { 
                 type: 'skill',
                 color: 0xf89820,
+                symbol: '⚡',
                 position: [9, 0, -22],
                 title: "JAVASCRIPT",
                 desc: "Full Stack Development",
@@ -440,10 +531,11 @@
                 }
             },
             
-            // Projetos (ciano)
+            // Projetos (ciano) - símbolo 📁
             { 
                 type: 'project',
                 color: 0x00ffff,
+                symbol: '📁',
                 position: [12, 0, -15],
                 title: "E-COMMERCE API",
                 desc: "Plataforma de vendas completa",
@@ -457,6 +549,7 @@
             { 
                 type: 'project',
                 color: 0x00ffff,
+                symbol: '📁',
                 position: [-10, 0, -25],
                 title: "TASK FLOW",
                 desc: "Sistema de gestão de tarefas",
@@ -468,10 +561,11 @@
                 }
             },
             
-            // Formação (rosa)
+            // Formação (rosa) - símbolo 🎓
             { 
                 type: 'education',
                 color: 0xff44aa,
+                symbol: '🎓',
                 position: [-15, 0, -8],
                 title: "BACHARELADO EM CC",
                 desc: "Ciência da Computação",
@@ -484,10 +578,11 @@
                 }
             },
             
-            // Experiência (verde)
+            // Experiência (verde) - símbolo 💼
             { 
                 type: 'experience',
                 color: 0x2ecc71,
+                symbol: '💼',
                 position: [18, 0, -20],
                 title: "SENIOR DEVELOPER",
                 desc: "Tech Corp (2022-presente)",
@@ -505,6 +600,7 @@
             { 
                 type: 'experience',
                 color: 0x2ecc71,
+                symbol: '💼',
                 position: [-18, 0, -30],
                 title: "PLENO DEV",
                 desc: "Startup X (2020-2022)",
@@ -520,10 +616,11 @@
                 }
             },
             
-            // Contato (vermelho)
+            // Contato (vermelho) - símbolo 📫
             { 
                 type: 'contact',
                 color: 0xff0000,
+                symbol: '📫',
                 position: [0, 0, -45],
                 title: "CONTATO",
                 desc: "Vamos conversar!",
@@ -536,10 +633,13 @@
             }
         ];
 
-        // Criar marcadores
+        // Criar marcadores com SÍMBOLOS
         const markers = [];
         
         curriculumData.forEach((data, index) => {
+            // Grupo para o marcador + símbolo
+            const markerGroup = new THREE.Group();
+            
             // Geometria baseada no tipo
             let geometry;
             switch(data.type) {
@@ -571,24 +671,55 @@
             });
 
             const marker = new THREE.Mesh(geometry, material);
-            marker.position.set(data.position[0], 1.5, data.position[2]);
             marker.castShadow = true;
             marker.receiveShadow = true;
+            markerGroup.add(marker);
 
             // Adicionar borda
             const edges = new THREE.EdgesGeometry(geometry);
             const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }));
             marker.add(line);
 
-            // Adicionar texto flutuante (placeholder - em produção usaria CSS2DRivder)
-            marker.userData = {
+            // Criar um canvas para o símbolo 3D
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            
+            // Fundo transparente
+            ctx.clearRect(0, 0, 64, 64);
+            
+            // Desenhar símbolo
+            ctx.font = 'bold 48px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(data.symbol, 32, 32);
+            
+            // Criar textura
+            const texture = new THREE.CanvasTexture(canvas);
+            const symbolMaterial = new THREE.SpriteMaterial({ 
+                map: texture,
+                transparent: true,
+                depthTest: false,
+                depthWrite: false
+            });
+            
+            const symbolSprite = new THREE.Sprite(symbolMaterial);
+            symbolSprite.scale.set(1.2, 1.2, 1);
+            symbolSprite.position.set(0, 1.8, 0);
+            markerGroup.add(symbolSprite);
+
+            markerGroup.position.set(data.position[0], 1.5, data.position[2]);
+            
+            markerGroup.userData = {
                 ...data,
                 discovered: false,
                 id: index
             };
 
-            scene.add(marker);
-            markers.push(marker);
+            scene.add(markerGroup);
+            markers.push(markerGroup);
 
             // Adicionar luz pontual
             const light = new THREE.PointLight(data.color, 1, 10);
@@ -696,7 +827,7 @@
 
         // Funções UI
         window.showInfo = (data) => {
-            document.getElementById('card-title').innerHTML = `${data.title}`;
+            document.getElementById('card-title').innerHTML = `${data.symbol} ${data.title}`;
             
             let content = `<p>${data.desc}</p>`;
             
@@ -739,10 +870,14 @@
                 data.discovered = true;
                 achievementsCount++;
                 document.getElementById('achievements-count').textContent = achievementsCount;
-                showToast(`✨ Novo item descoberto: ${data.title}`);
+                
+                // AUMENTA O TAMANHO DA COBRA QUANDO GANHA CONQUISTA!
+                updateSnakeSize();
+                
+                showToast(`✨ Nova conquista: ${data.title}! 🐍 Cobra cresceu!`);
                 
                 if (achievementsCount === markers.length) {
-                    showToast("🎉 PARABÉNS! Você descobriu tudo sobre mim!");
+                    showToast("🎉 PARABÉNS! Você descobriu tudo sobre mim! Cobra no tamanho máximo!");
                 }
             }
         };
@@ -752,8 +887,8 @@
             cardOpen = false;
             if (currentTarget) {
                 // Pequeno recuo ao fechar
-                const direction = player.position.clone().sub(currentTarget.position).normalize();
-                player.position.add(direction.multiplyScalar(1.5));
+                const direction = snakeGroup.position.clone().sub(currentTarget.position).normalize();
+                snakeGroup.position.add(direction.multiplyScalar(1.5));
                 currentTarget = null;
             }
         };
@@ -769,32 +904,64 @@
             }, 2000);
         }
 
+        // Variáveis para animação da cobra
+        let snakeAngle = 0;
+        const bodyPositions = [];
+
         // Loop de animação
         function animate() {
             requestAnimationFrame(animate);
 
-            // Movimento do jogador
+            // Movimento da cobra
             if (!cardOpen) {
-                const speed = keys.shift ? 0.3 : 0.15;
+                const speed = keys.shift ? 0.25 : 0.12;
+                const oldPos = snakeGroup.position.clone();
                 
-                if (keys.w) player.position.z -= speed;
-                if (keys.s) player.position.z += speed;
-                if (keys.a) player.position.x -= speed;
-                if (keys.d) player.position.x += speed;
+                if (keys.w) snakeGroup.position.z -= speed;
+                if (keys.s) snakeGroup.position.z += speed;
+                if (keys.a) snakeGroup.position.x -= speed;
+                if (keys.d) snakeGroup.position.x += speed;
 
                 // Limites do mapa
-                player.position.x = Math.max(-25, Math.min(25, player.position.x));
-                player.position.z = Math.max(-48, Math.min(10, player.position.z));
+                snakeGroup.position.x = Math.max(-25, Math.min(25, snakeGroup.position.x));
+                snakeGroup.position.z = Math.max(-48, Math.min(10, snakeGroup.position.z));
+
+                // Rotacionar a cobra na direção do movimento
+                if (keys.w || keys.s || keys.a || keys.d) {
+                    const direction = new THREE.Vector3(
+                        snakeGroup.position.x - oldPos.x,
+                        0,
+                        snakeGroup.position.z - oldPos.z
+                    );
+                    if (direction.length() > 0) {
+                        direction.normalize();
+                        const angle = Math.atan2(direction.x, direction.z);
+                        snakeGroup.rotation.y = angle;
+                    }
+                }
+
+                // Animar o corpo da cobra (ondulação)
+                snakeAngle += 0.1;
+                bodyPositions.unshift(snakeGroup.position.clone());
+                if (bodyPositions.length > 10) bodyPositions.pop();
+                
+                // Animar os segmentos do corpo
+                bodySegments.forEach((segment, index) => {
+                    if (bodyPositions[index + 2]) {
+                        segment.position.copy(bodyPositions[index + 2].clone().sub(snakeGroup.position));
+                        segment.position.y = Math.sin(snakeAngle + index) * 0.1 * snakeSize;
+                    }
+                });
             }
 
             // Atualizar câmera
             const targetCamPos = new THREE.Vector3(
-                player.position.x,
-                player.position.y + 7,
-                player.position.z + 12
+                snakeGroup.position.x,
+                snakeGroup.position.y + 7,
+                snakeGroup.position.z + 12
             );
             camera.position.lerp(targetCamPos, 0.05);
-            camera.lookAt(player.position);
+            camera.lookAt(snakeGroup.position);
 
             // Detecção de proximidade
             if (!cardOpen) {
@@ -802,8 +969,10 @@
                 let closestMarker = null;
 
                 markers.forEach(marker => {
-                    const dist = player.position.distanceTo(marker.position);
-                    if (dist < 3.5 && dist < closestDist) {
+                    const dist = snakeGroup.position.distanceTo(marker.position);
+                    // Distância de detecção aumenta conforme a cobra cresce
+                    const detectionRange = 4.0 + (snakeSize - 1.0) * 1.5;
+                    if (dist < detectionRange && dist < closestDist) {
                         closestDist = dist;
                         closestMarker = marker;
                     }
@@ -818,8 +987,10 @@
             // Coleta de cubos
             collectibles.forEach(cube => {
                 if (!cube.userData.collected) {
-                    const dist = player.position.distanceTo(cube.position);
-                    if (dist < 2) {
+                    const dist = snakeGroup.position.distanceTo(cube.position);
+                    // Distância de coleta também aumenta com o tamanho
+                    const collectRange = 2.5 + (snakeSize - 1.0) * 1.0;
+                    if (dist < collectRange) {
                         cube.userData.collected = true;
                         scene.remove(cube);
                         cubesCollected++;
@@ -829,7 +1000,8 @@
                         if (cubesCollected === collectibles.length) {
                             achievementsCount++;
                             document.getElementById('achievements-count').textContent = achievementsCount;
-                            showToast("🌟 VOCÊ COLETOU TODOS OS CÓDIGOS!");
+                            updateSnakeSize(); // Também cresce com todos os códigos!
+                            showToast("🌟 VOCÊ COLETOU TODOS OS CÓDIGOS! Cobra cresceu!");
                         }
                     }
                 }
