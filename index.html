@@ -1,716 +1,1122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Portfolio Game - Tech Skills Showcase</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        #info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            border-radius: 8px;
-            z-index: 100;
-            border-left: 4px solid #00ff88;
-            box-shadow: 0 0 20px rgba(0,255,136,0.3);
-        }
-        
-        #controls {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            background: rgba(0,0,0,0.6);
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-size: 16px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
-            z-index: 100;
-            display: flex;
-            gap: 30px;
-        }
-        
-        .key {
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            color: #00ff88;
-            font-weight: bold;
-        }
-        
-        #skills-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            background: rgba(0,0,0,0.8);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #00ff88;
-            box-shadow: 0 0 30px rgba(0,255,136,0.2);
-            z-index: 100;
-            min-width: 200px;
-            backdrop-filter: blur(10px);
-        }
-        
-        #skills-panel h3 {
-            margin: 0 0 15px 0;
-            color: #00ff88;
-            font-size: 20px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
-        }
-        
-        .skill-item {
-            display: flex;
-            align-items: center;
-            margin: 12px 0;
-            padding: 8px;
-            border-radius: 6px;
-            background: rgba(255,255,255,0.05);
-            transition: transform 0.3s;
-        }
-        
-        .skill-item:hover {
-            transform: translateX(-5px);
-            background: rgba(0,255,136,0.1);
-        }
-        
-        .skill-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 12px;
-        }
-        
-        .skill-name {
-            flex: 1;
-            font-weight: bold;
-        }
-        
-        .skill-level {
-            color: #00ff88;
-            font-size: 14px;
-        }
-        
-        .skill-icon {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-        
-        #center-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            font-size: 24px;
-            text-shadow: 0 0 20px rgba(0,255,136,0.5);
-            background: rgba(0,0,0,0.6);
-            padding: 20px 40px;
-            border-radius: 60px;
-            border: 2px solid #00ff88;
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            z-index: 200;
-            backdrop-filter: blur(5px);
-        }
-        
-        #camera-status {
-            position: absolute;
-            bottom: 100px;
-            right: 20px;
-            color: #00ff88;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-family: monospace;
-            font-size: 12px;
-            border: 1px solid #00ff88;
-            z-index: 100;
-        }
-        
-        #reset-btn {
-            position: absolute;
-            top: 20px;
-            right: 240px;
-            background: rgba(255,0,0,0.7);
-            border: 2px solid #ff4444;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-            z-index: 100;
-        }
-        
-        #reset-btn:hover {
-            background: #ff4444;
-            transform: scale(1.05);
-        }
-        
-        #boundary-warning {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff4444;
-            font-size: 18px;
-            background: rgba(0,0,0,0.8);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 2px solid #ff4444;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 300;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEV CITY — Portfolio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap');
+:root{
+  --green:#00ff88; --blue:#00d4ff; --orange:#ff7e2f;
+  --pink:#ff2d78;  --yellow:#ffe566; --dark:#040c18;
+  --panel:rgba(4,10,20,.95); --border:rgba(0,212,255,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);overflow:hidden;font-family:'Rajdhani',sans-serif;color:#e0f4ff;}
+canvas#cv{display:block;position:fixed;inset:0;z-index:0;}
+
+/* ── OVERLAYS ── */
+#scan{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);}
+#vig{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.65) 100%);}
+
+/* ── TOPBAR ── */
+#topbar{position:fixed;top:0;left:0;right:0;height:50px;
+  background:rgba(4,8,16,.97);border-bottom:1px solid rgba(0,212,255,.13);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;z-index:60;backdrop-filter:blur(12px);}
+#logo{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--green);
+  text-shadow:0 0 20px var(--green);animation:glitch 7s ease-in-out infinite;}
+@keyframes glitch{
+  0%,88%,100%{text-shadow:0 0 20px var(--green);}
+  90%{text-shadow:-3px 0 var(--pink),3px 0 var(--blue);transform:skewX(-2deg);}
+  92%{text-shadow:3px 0 var(--pink),-3px 0 var(--blue);transform:skewX(2deg);}
+  94%{text-shadow:0 0 20px var(--green);transform:none;}
+}
+.hs{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,212,255,.7);display:flex;align-items:center;gap:5px;}
+.hv{color:var(--green);}
+.pulse{width:7px;height:7px;background:var(--green);border-radius:50%;
+  box-shadow:0 0 8px var(--green);animation:pls 1.4s ease-in-out infinite;}
+@keyframes pls{0%,100%{transform:scale(1);}50%{transform:scale(1.6);opacity:.5;}}
+
+/* ── LEFT SIDE ── */
+#sidebar{
+  position:fixed;left:0;top:50px;bottom:0;width:250px;
+  background:rgba(4,8,16,.95);border-right:1px solid rgba(0,212,255,.1);
+  z-index:50;backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;padding:18px 0;
+  overflow-y:auto;
+}
+#sidebar::-webkit-scrollbar{width:3px;}
+#sidebar::-webkit-scrollbar-thumb{background:rgba(0,212,255,.2);border-radius:2px;}
+
+.sb-section{padding:0 16px 16px;border-bottom:1px solid rgba(0,212,255,.07);margin-bottom:14px;}
+.sb-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,212,255,.4);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+
+/* Avatar */
+#avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 16px 16px;}
+#avatar{width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,#001a2e,#003366);
+  border:2px solid var(--green);
+  box-shadow:0 0 18px rgba(0,255,136,.4),inset 0 0 18px rgba(0,255,136,.08);
+  display:flex;align-items:center;justify-content:center;font-size:30px;
+  position:relative;overflow:hidden;}
+#avatar::after{content:'';position:absolute;inset:0;
+  background:conic-gradient(from 0deg,transparent 70%,rgba(0,255,136,.3) 100%);
+  animation:spin 4s linear infinite;border-radius:50%;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.av-name{font-family:'Press Start 2P',monospace;font-size:7px;color:#e0f4ff;text-align:center;line-height:2;}
+.av-title{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--orange);}
+.av-badge{background:rgba(0,255,136,.1);border:1px solid var(--green);border-radius:20px;
+  padding:2px 12px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);}
+
+/* XP bar */
+.xp-wrap{padding:0 16px;margin-bottom:12px;}
+.xp-top{display:flex;justify-content:space-between;
+  font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,212,255,.5);margin-bottom:4px;}
+.xp-bar{height:5px;background:rgba(0,255,136,.08);border-radius:3px;overflow:hidden;border:1px solid rgba(0,255,136,.15);}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));
+  box-shadow:0 0 8px var(--green);border-radius:3px;animation:xppls 2s ease-in-out infinite;}
+@keyframes xppls{0%,100%{opacity:1;}50%{opacity:.65;}}
+
+/* Skill list */
+.sk-item{display:flex;align-items:center;gap:9px;padding:7px 10px;margin:2px 6px;
+  border-radius:4px;cursor:pointer;border:1px solid transparent;transition:all .2s;}
+.sk-item:hover{background:rgba(0,212,255,.07);border-color:rgba(0,212,255,.18);}
+.sk-item.active{background:rgba(0,255,136,.09);border-color:rgba(0,255,136,.28);}
+.sk-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  font-size:15px;border-radius:6px;flex-shrink:0;}
+.sk-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#e0f4ff;letter-spacing:.5px;}
+.sk-mini{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:3px;overflow:hidden;}
+.sk-mini-fill{height:100%;border-radius:2px;}
+.sk-lvl{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,212,255,.5);}
+
+/* Stats */
+.stat-row{display:flex;justify-content:space-between;padding:3px 4px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;}
+.stat-k{color:rgba(0,212,255,.45);}
+.stat-v{color:var(--green);}
+
+/* Controls widget */
+#ctrl-hud{padding:0 16px;}
+.ctrl-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;width:fit-content;margin:0 auto 6px;}
+.ck{width:30px;height:30px;background:rgba(0,20,40,.8);border:1px solid rgba(0,212,255,.25);
+  border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,212,255,.7);
+  transition:all .1s;box-shadow:0 3px 0 rgba(0,212,255,.12);}
+.ck.lit{background:rgba(0,255,136,.14);border-color:var(--green);color:var(--green);
+  box-shadow:0 0 10px rgba(0,255,136,.25),0 3px 0 rgba(0,255,136,.12);}
+.ck.empty{background:transparent;border-color:transparent;box-shadow:none;}
+.ctrl-note{font-family:'Share Tech Mono',monospace;font-size:7px;
+  color:rgba(0,212,255,.3);letter-spacing:1px;text-align:center;margin-top:4px;line-height:1.8;}
+
+/* ── MAP PANEL ── (isometric overhead - like portfolio-city) */
+#map-panel{
+  position:fixed;left:0;top:50px;bottom:0;width:250px;
+  background:rgba(4,8,16,.97);border-right:1px solid rgba(0,212,255,.1);
+  z-index:50;backdrop-filter:blur(12px);
+  display:none;flex-direction:column;
+}
+#map-canvas-wrap{flex:1;position:relative;overflow:hidden;}
+#map-3d{display:block;width:100%;height:100%;}
+.map-label{position:absolute;font-family:'Share Tech Mono',monospace;font-size:7px;
+  color:rgba(0,212,255,.7);letter-spacing:1px;pointer-events:none;
+  white-space:nowrap;transform:translate(-50%,-50%);
+  text-shadow:0 0 6px rgba(0,212,255,.5);}
+#map-legend{padding:10px 14px;border-top:1px solid rgba(0,212,255,.08);}
+.ml-title{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(0,212,255,.35);letter-spacing:3px;margin-bottom:8px;}
+.ml-row{display:flex;align-items:center;gap:7px;padding:3px 0;
+  cursor:pointer;transition:opacity .2s;border-bottom:1px solid rgba(0,212,255,.04);}
+.ml-row:last-child{border:none;}
+.ml-row:hover{opacity:.75;}
+.ml-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.ml-name{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:#e0f4ff;flex:1;}
+.ml-sub{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(0,212,255,.35);}
+
+/* ── TAB SWITCHER ── */
+#tab-bar{
+  position:fixed;left:0;top:50px;width:250px;height:36px;
+  display:flex;z-index:61;background:rgba(4,8,16,.98);
+  border-right:1px solid rgba(0,212,255,.1);
+  border-bottom:1px solid rgba(0,212,255,.08);
+}
+.tab-btn{flex:1;font-family:'Share Tech Mono',monospace;font-size:8px;
+  background:transparent;border:none;color:rgba(0,212,255,.4);
+  cursor:pointer;letter-spacing:1px;transition:all .2s;
+  border-bottom:2px solid transparent;}
+.tab-btn.on{color:var(--green);border-bottom-color:var(--green);background:rgba(0,255,136,.05);}
+.tab-btn:hover:not(.on){color:rgba(0,212,255,.7);}
+
+/* ── INFO PANEL ── */
+#info-panel{position:fixed;right:20px;top:62px;width:300px;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  backdrop-filter:blur(16px);z-index:60;overflow:hidden;
+  transition:all .4s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 0 40px rgba(0,0,0,.6);}
+#info-panel.hidden{opacity:0;transform:translateX(16px) scale(.97);pointer-events:none;}
+#ip-accent{height:3px;}
+#ip-body{padding:18px 20px 20px;}
+#ip-icon{font-size:34px;display:block;margin-bottom:9px;}
+#ip-name{font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.9;margin-bottom:4px;}
+#ip-type{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,212,255,.45);letter-spacing:2px;margin-bottom:13px;}
+.ip-br{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(200,220,255,.4);margin-bottom:4px;}
+.ip-bar{height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;margin-bottom:13px;}
+.ip-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.16,1,.3,1);position:relative;}
+.ip-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:7px;background:rgba(255,255,255,.85);border-radius:3px;filter:blur(1px);}
+#ip-desc{font-size:13px;line-height:1.7;color:rgba(200,220,255,.68);margin-bottom:13px;}
+.ip-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:13px;}
+.iptag{font-family:'Share Tech Mono',monospace;font-size:7px;padding:2px 7px;border-radius:2px;border:1px solid;letter-spacing:1px;}
+.ip-facts{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.ipfact{background:rgba(0,20,40,.6);border:1px solid rgba(0,212,255,.08);border-radius:5px;padding:7px 10px;}
+.ipfl{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(0,212,255,.35);letter-spacing:2px;margin-bottom:2px;}
+.ipfv{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;}
+#ip-close{position:absolute;top:12px;right:12px;
+  background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.18);
+  color:rgba(0,212,255,.55);font-size:12px;width:25px;height:25px;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;}
+#ip-close:hover{background:rgba(255,45,120,.14);border-color:var(--pink);color:var(--pink);}
+
+/* ── PROXIMITY HINT ── */
+#hint{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(0);
+  background:rgba(4,10,20,.92);border:1px solid var(--green);border-radius:5px;
+  padding:7px 18px;z-index:60;
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);
+  letter-spacing:2px;pointer-events:none;
+  transition:all .3s;box-shadow:0 0 18px rgba(0,255,136,.2);}
+#hint.hidden{opacity:0;transform:translateX(-50%) translateY(8px);}
+
+/* ── CAMERA MODE BADGE ── */
+#cam-mode{position:fixed;right:20px;bottom:20px;
+  background:rgba(4,10,20,.85);border:1px solid rgba(0,212,255,.2);border-radius:5px;
+  padding:6px 12px;z-index:60;pointer-events:none;
+  font-family:'Share Tech Mono',monospace;font-size:8px;
+  color:rgba(0,212,255,.5);letter-spacing:2px;}
+
+/* ── TOAST ── */
+#toast{position:fixed;top:62px;left:50%;transform:translateX(-50%) translateY(-70px);
+  background:rgba(4,10,20,.96);border:1px solid var(--green);border-radius:5px;
+  padding:8px 18px;z-index:70;font-family:'Share Tech Mono',monospace;font-size:10px;
+  color:var(--green);letter-spacing:2px;transition:transform .3s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 0 18px rgba(0,255,136,.2);pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--dark);z-index:1000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  transition:opacity .6s;}
+#loading.out{opacity:0;pointer-events:none;}
+.ld-logo{font-family:'Press Start 2P',monospace;font-size:22px;color:var(--green);
+  text-shadow:0 0 40px var(--green);animation:glitch 2s infinite;}
+.ld-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,212,255,.5);letter-spacing:4px;}
+.ld-bar{width:260px;height:4px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:2px;overflow:hidden;}
+.ld-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));animation:ldf 2.6s ease forwards;}
+@keyframes ldf{from{width:0}to{width:100%}}
+.ld-step{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,212,255,.4);letter-spacing:1px;}
+
+/* Adjust main content when sidebar open */
+body.show-sidebar #map-panel{ display:none; }
+body.show-map #sidebar{ display:none; }
+body.show-map #map-panel{ display:flex; }
+</style>
 </head>
-<body>
-    <div id="info">🎮 Tech Stack Portfolio | Câmera Estabilizada</div>
-    
-    <div id="skills-panel">
-        <h3>⚡ Tech Stack</h3>
-        <div class="skill-item">
-            <div class="skill-dot" style="background: #f89820;"></div>
-            <span class="skill-icon">☕</span>
-            <span class="skill-name">Java</span>
-            <span class="skill-level">★★★★★</span>
-        </div>
-        <div class="skill-item">
-            <div class="skill-dot" style="background: #e34c26;"></div>
-            <span class="skill-icon">🌐</span>
-            <span class="skill-name">HTML</span>
-            <span class="skill-level">★★★★★</span>
-        </div>
-        <div class="skill-item">
-            <div class="skill-dot" style="background: #2965f1;"></div>
-            <span class="skill-icon">🎨</span>
-            <span class="skill-name">CSS</span>
-            <span class="skill-level">★★★★★</span>
-        </div>
-        <div class="skill-item">
-            <div class="skill-dot" style="background: #68a063;"></div>
-            <span class="skill-icon">🟢</span>
-            <span class="skill-name">Node.js</span>
-            <span class="skill-level">★★★★☆</span>
-        </div>
-        <div class="skill-item">
-            <div class="skill-dot" style="background: #6db33f;"></div>
-            <span class="skill-icon">🍃</span>
-            <span class="skill-name">Spring Boot</span>
-            <span class="skill-level">★★★★☆</span>
-        </div>
-    </div>
-    
-    <button id="reset-btn">⟲ Resetar Câmera</button>
-    
-    <div id="camera-status">
-        Distância: <span id="cam-distance">0</span>m | Y: <span id="cam-y">0</span>m
-    </div>
-    
-    <div id="controls">
-        <span><span class="key">WASD</span> Move</span>
-        <span><span class="key">Mouse</span> Olhar</span>
-        <span><span class="key">R</span> Reset</span>
-    </div>
-    
-    <div id="center-message">✨ Mantenha-se dentro da arena! ✨</div>
-    <div id="boundary-warning">⚠️ Volte para a arena! ⚠️</div>
+<body class="show-sidebar">
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
-            }
-        }
-    </script>
+<!-- LOADING -->
+<div id="loading">
+  <div class="ld-logo">DEV CITY</div>
+  <div class="ld-sub">CONSTRUINDO O MUNDO...</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+  <div class="ld-step" id="ldstep">Gerando terreno...</div>
+</div>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-        
-        // Elementos UI
-        const camDistanceSpan = document.getElementById('cam-distance');
-        const camYSpan = document.getElementById('cam-y');
-        const boundaryWarning = document.getElementById('boundary-warning');
-        const resetBtn = document.getElementById('reset-btn');
-        
-        // Limites da arena
-        const ARENA_SIZE = 12;
-        const MIN_Y = 1;
-        const MAX_Y = 8;
-        const CENTER = new THREE.Vector3(0, 2, 0);
-        
-        // Posição inicial da câmera
-        const INITIAL_CAMERA_POS = new THREE.Vector3(8, 4, 10);
-        
-        // Inicializar cena
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0a0a1a);
-        scene.fog = new THREE.Fog(0x0a0a1a, 15, 30);
-        
-        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.copy(INITIAL_CAMERA_POS);
-        
-        // Renderers
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
-        
-        const labelRenderer = new CSS2DRenderer();
-        labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        labelRenderer.domElement.style.position = 'absolute';
-        labelRenderer.domElement.style.top = '0px';
-        labelRenderer.domElement.style.left = '0px';
-        labelRenderer.domElement.style.pointerEvents = 'none';
-        document.body.appendChild(labelRenderer.domElement);
-        
-        // Controls com limites
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.screenSpacePanning = true;
-        controls.maxPolarAngle = Math.PI / 2.2; // Impede de ir muito para baixo
-        controls.minDistance = 4;
-        controls.maxDistance = 15; // LIMITE PRINCIPAL - não deixa afastar demais
-        controls.target.set(0, 2, 0);
-        controls.enableZoom = true;
-        controls.zoomSpeed = 0.5;
-        
-        // Iluminação
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
-        
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-        dirLight.position.set(5, 15, 10);
-        dirLight.castShadow = true;
-        dirLight.receiveShadow = true;
-        scene.add(dirLight);
-        
-        // Luzes coloridas para as plataformas
-        const colors = [0xf89820, 0xe34c26, 0x2965f1, 0x68a063, 0x6db33f];
-        
-        // Parede invisível para delimitar a arena (apenas visual)
-        const wallMaterial = new THREE.LineBasicMaterial({ color: 0x00ff88, opacity: 0.2, transparent: true });
-        
-        // Criar um círculo no chão marcando o limite
-        const boundaryRingGeo = new THREE.TorusGeometry(ARENA_SIZE, 0.1, 16, 64);
-        const boundaryRingMat = new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x004422, transparent: true, opacity: 0.3 });
-        const boundaryRing = new THREE.Mesh(boundaryRingGeo, boundaryRingMat);
-        boundaryRing.rotation.x = Math.PI / 2;
-        boundaryRing.position.y = 0.05;
-        scene.add(boundaryRing);
-        
-        // Adicionar postes de limite
-        for (let i = 0; i < 8; i++) {
-            const angle = (i / 8) * Math.PI * 2;
-            const x = Math.cos(angle) * ARENA_SIZE;
-            const z = Math.sin(angle) * ARENA_SIZE;
-            
-            const poleGeo = new THREE.CylinderGeometry(0.1, 0.2, 1, 6);
-            const poleMat = new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x004422 });
-            const pole = new THREE.Mesh(poleGeo, poleMat);
-            pole.position.set(x, 0.5, z);
-            scene.add(pole);
-        }
-        
-        // Chão
-        const groundGeometry = new THREE.CircleGeometry(ARENA_SIZE + 2, 32);
-        const groundMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x1a1a2e,
-            roughness: 0.6,
-            metalness: 0.1
-        });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.y = 0;
-        ground.receiveShadow = true;
-        scene.add(ground);
-        
-        // Grid
-        const gridHelper = new THREE.GridHelper(ARENA_SIZE * 2, 20, 0x00ff88, 0x3366aa);
-        gridHelper.position.y = 0.01;
-        scene.add(gridHelper);
-        
-        // Criar plataformas
-        const skills = [
-            { name: 'Java', color: 0xf89820, posX: -4, posZ: -3, icon: '☕', level: 5 },
-            { name: 'HTML', color: 0xe34c26, posX: 4, posZ: -3, icon: '🌐', level: 5 },
-            { name: 'CSS', color: 0x2965f1, posX: -4, posZ: 3, icon: '🎨', level: 5 },
-            { name: 'Node.js', color: 0x68a063, posX: 0, posZ: 0, icon: '🟢', level: 4 },
-            { name: 'Spring Boot', color: 0x6db33f, posX: 4, posZ: 3, icon: '🍃', level: 4 }
-        ];
-        
-        const platforms = [];
-        
-        skills.forEach((skill) => {
-            const platformGroup = new THREE.Group();
-            platformGroup.position.set(skill.posX, 0.5, skill.posZ);
-            
-            // Base
-            const baseGeo = new THREE.CylinderGeometry(2.0, 2.0, 0.4, 32);
-            const baseMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7 });
-            const base = new THREE.Mesh(baseGeo, baseMat);
-            base.position.y = 0.2;
-            base.receiveShadow = true;
-            base.castShadow = true;
-            platformGroup.add(base);
-            
-            // Plataforma principal
-            const discGeo = new THREE.CylinderGeometry(1.6, 1.6, 0.5, 32);
-            const discMat = new THREE.MeshStandardMaterial({ 
-                color: skill.color,
-                emissive: new THREE.Color(skill.color).multiplyScalar(0.2),
-                roughness: 0.3,
-                metalness: 0.5
-            });
-            const disc = new THREE.Mesh(discGeo, discMat);
-            disc.position.y = 0.7;
-            disc.castShadow = true;
-            disc.receiveShadow = true;
-            platformGroup.add(disc);
-            
-            // Anel
-            const ringGeo = new THREE.TorusGeometry(1.3, 0.06, 16, 64);
-            const ringMat = new THREE.MeshStandardMaterial({ 
-                color: 0xffffff,
-                emissive: new THREE.Color(skill.color)
-            });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            ring.rotation.x = Math.PI / 2;
-            ring.position.y = 1.0;
-            platformGroup.add(ring);
-            
-            // Pilar
-            const pillarGeo = new THREE.CylinderGeometry(0.25, 0.35, 1.8, 8);
-            const pillarMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8 });
-            const pillar = new THREE.Mesh(pillarGeo, pillarMat);
-            pillar.position.y = 1.6;
-            pillar.castShadow = true;
-            platformGroup.add(pillar);
-            
-            // Ícone
-            const iconDiv = document.createElement('div');
-            iconDiv.textContent = skill.icon;
-            iconDiv.style.fontSize = '48px';
-            iconDiv.style.textShadow = `0 0 20px ${new THREE.Color(skill.color).getStyle()}`;
-            iconDiv.style.filter = 'drop-shadow(0 0 10px rgba(0,255,136,0.5))';
-            
-            const iconLabel = new CSS2DObject(iconDiv);
-            iconLabel.position.set(0, 2.4, 0);
-            platformGroup.add(iconLabel);
-            
-            // Nome
-            const nameDiv = document.createElement('div');
-            nameDiv.textContent = skill.name;
-            nameDiv.style.color = 'white';
-            nameDiv.style.fontSize = '16px';
-            nameDiv.style.fontWeight = 'bold';
-            nameDiv.style.backgroundColor = 'rgba(0,0,0,0.7)';
-            nameDiv.style.padding = '4px 12px';
-            nameDiv.style.borderRadius = '16px';
-            nameDiv.style.border = `2px solid ${new THREE.Color(skill.color).getStyle()}`;
-            
-            const nameLabel = new CSS2DObject(nameDiv);
-            nameLabel.position.set(0, 3.0, 0);
-            platformGroup.add(nameLabel);
-            
-            scene.add(platformGroup);
-            
-            platforms.push({
-                group: platformGroup,
-                speed: 0.3 + Math.random() * 0.3,
-                offset: Math.random() * Math.PI * 2,
-                ring: ring,
-                posX: skill.posX,
-                posZ: skill.posZ,
-                name: skill.name,
-                color: skill.color
-            });
-            
-            // Partículas
-            const particleCount = 20;
-            const particleGeo = new THREE.BufferGeometry();
-            const particlePositions = new Float32Array(particleCount * 3);
-            
-            for (let i = 0; i < particleCount; i++) {
-                const angle = (i / particleCount) * Math.PI * 2;
-                const radius = 2.8;
-                const height = Math.sin(angle * 3) * 1.5;
-                
-                particlePositions[i*3] = Math.cos(angle) * radius;
-                particlePositions[i*3+1] = 1.8 + height;
-                particlePositions[i*3+2] = Math.sin(angle) * radius;
-            }
-            
-            particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-            
-            const particleMat = new THREE.PointsMaterial({ 
-                size: 0.15, 
-                color: skill.color,
-                transparent: true,
-                blending: THREE.AdditiveBlending
-            });
-            const particles = new THREE.Points(particleGeo, particleMat);
-            particles.position.set(skill.posX, 0, skill.posZ);
-            scene.add(particles);
-            
-            // Círculo no chão
-            const circleGeo = new THREE.CircleGeometry(2.0, 32);
-            const circleMat = new THREE.MeshStandardMaterial({ 
-                color: skill.color, 
-                transparent: true, 
-                opacity: 0.15,
-                side: THREE.DoubleSide
-            });
-            const circle = new THREE.Mesh(circleGeo, circleMat);
-            circle.rotation.x = -Math.PI / 2;
-            circle.position.set(skill.posX, 0.02, skill.posZ);
-            scene.add(circle);
-        });
-        
-        // Estrelas
-        const starGeo = new THREE.BufferGeometry();
-        const starCount = 1000;
-        const starPositions = new Float32Array(starCount * 3);
-        for (let i = 0; i < starCount; i++) {
-            starPositions[i*3] = (Math.random() - 0.5) * 100;
-            starPositions[i*3+1] = (Math.random() - 0.5) * 100;
-            starPositions[i*3+2] = (Math.random() - 0.5) * 100 - 30;
-        }
-        starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-        const stars = new THREE.Points(starGeo, starMat);
-        scene.add(stars);
-        
-        const messageEl = document.getElementById('center-message');
-        
-        // Estado do teclado
-        const keyState = {
-            w: false, a: false, s: false, d: false,
-            r: false
-        };
-        
-        window.addEventListener('keydown', (e) => {
-            switch(e.code) {
-                case 'KeyW': keyState.w = true; e.preventDefault(); break;
-                case 'KeyA': keyState.a = true; e.preventDefault(); break;
-                case 'KeyS': keyState.s = true; e.preventDefault(); break;
-                case 'KeyD': keyState.d = true; e.preventDefault(); break;
-                case 'KeyR': 
-                    keyState.r = true; 
-                    resetCamera();
-                    e.preventDefault(); 
-                    break;
-            }
-        });
-        
-        window.addEventListener('keyup', (e) => {
-            switch(e.code) {
-                case 'KeyW': keyState.w = false; e.preventDefault(); break;
-                case 'KeyA': keyState.a = false; e.preventDefault(); break;
-                case 'KeyS': keyState.s = false; e.preventDefault(); break;
-                case 'KeyD': keyState.d = false; e.preventDefault(); break;
-                case 'KeyR': keyState.r = false; e.preventDefault(); break;
-            }
-        });
-        
-        // Função para resetar câmera
-        function resetCamera() {
-            camera.position.copy(INITIAL_CAMERA_POS);
-            controls.target.set(0, 2, 0);
-            controls.update();
-            
-            messageEl.textContent = '✨ Câmera resetada! ✨';
-            messageEl.style.opacity = '1';
-            setTimeout(() => {
-                messageEl.style.opacity = '0';
-            }, 2000);
-        }
-        
-        resetBtn.addEventListener('click', resetCamera);
-        
-        // Função para limitar posição da câmera
-        function limitCameraPosition() {
-            let needsCorrection = false;
-            const pos = camera.position;
-            
-            // Limite horizontal (círculo)
-            const distanceFromCenter = Math.sqrt(pos.x * pos.x + pos.z * pos.z);
-            
-            if (distanceFromCenter > ARENA_SIZE) {
-                // Normalizar e trazer para dentro do limite
-                const angle = Math.atan2(pos.z, pos.x);
-                pos.x = Math.cos(angle) * ARENA_SIZE * 0.95;
-                pos.z = Math.sin(angle) * ARENA_SIZE * 0.95;
-                needsCorrection = true;
-            }
-            
-            // Limite vertical
-            if (pos.y < MIN_Y) {
-                pos.y = MIN_Y;
-                needsCorrection = true;
-            } else if (pos.y > MAX_Y) {
-                pos.y = MAX_Y;
-                needsCorrection = true;
-            }
-            
-            // Mostrar aviso se estiver perto da borda
-            if (distanceFromCenter > ARENA_SIZE * 0.8) {
-                boundaryWarning.style.opacity = '0.8';
-                setTimeout(() => {
-                    boundaryWarning.style.opacity = '0';
-                }, 500);
-            }
-            
-            return needsCorrection;
-        }
-        
-        // Função de movimento com limites
-        function moveCamera() {
-            const speed = 0.1;
-            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-            
-            forward.y = 0;
-            forward.normalize();
-            right.y = 0;
-            right.normalize();
-            
-            const oldPos = camera.position.clone();
-            
-            if (keyState.w) camera.position.addScaledVector(forward, speed);
-            if (keyState.s) camera.position.addScaledVector(forward, -speed);
-            if (keyState.a) camera.position.addScaledVector(right, -speed);
-            if (keyState.d) camera.position.addScaledVector(right, speed);
-            
-            // Aplicar limites
-            const corrected = limitCameraPosition();
-            
-            // Se corrigiu, não atualizar o target bruscamente
-            if (!corrected) {
-                controls.target.set(camera.position.x, camera.position.y - 1, camera.position.z - 2);
-            } else {
-                controls.target.set(camera.position.x, Math.max(1, camera.position.y - 1), camera.position.z - 2);
-            }
-        }
-        
-        // Click interaction
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        
-        renderer.domElement.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-            mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-            
-            raycaster.setFromCamera(mouse, camera);
-            
-            const platformDiscs = platforms.map(p => p.group.children[1]);
-            const intersects = raycaster.intersectObjects(platformDiscs);
-            
-            if (intersects.length > 0) {
-                const hitDisc = intersects[0].object;
-                const platform = platforms.find(p => p.group.children[1] === hitDisc);
-                if (platform) {
-                    messageEl.textContent = `✨ ${platform.name} ✨`;
-                    messageEl.style.opacity = '1';
-                    setTimeout(() => {
-                        messageEl.style.opacity = '0';
-                    }, 1500);
-                }
-            }
-        });
-        
-        // Atualizar UI
-        function updateUI() {
-            const distance = Math.sqrt(
-                camera.position.x * camera.position.x + 
-                camera.position.z * camera.position.z
-            ).toFixed(1);
-            
-            camDistanceSpan.textContent = distance;
-            camYSpan.textContent = camera.position.y.toFixed(1);
-        }
-        
-        // Mensagem inicial
-        setTimeout(() => {
-            messageEl.style.opacity = '1';
-            messageEl.textContent = '🚫 Fique dentro do círculo verde! 🚫';
-            setTimeout(() => {
-                messageEl.style.opacity = '0';
-            }, 3000);
-        }, 1000);
-        
-        // Animation loop
-        let clock = new THREE.Clock();
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            const delta = clock.getDelta();
-            const elapsedTime = performance.now() / 1000;
-            
-            // Mover câmera
-            moveCamera();
-            
-            // Animar plataformas
-            platforms.forEach((platform) => {
-                platform.group.position.y = 0.5 + Math.sin(elapsedTime * platform.speed + platform.offset) * 0.15;
-                platform.group.rotation.y += 0.002;
-                
-                if (platform.ring) {
-                    platform.ring.rotation.z += 0.005;
-                }
-            });
-            
-            // Rotacionar estrelas lentamente
-            stars.rotation.y += 0.0001;
-            
-            // Atualizar controles
-            controls.update();
-            
-            // Atualizar UI
-            updateUI();
-            
-            // Render
-            renderer.render(scene, camera);
-            labelRenderer.render(scene, camera);
-        }
-        
-        animate();
-        
-        // Window resize
-        window.addEventListener('resize', onWindowResize, false);
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        }
-    </script>
+<!-- MAIN CANVAS -->
+<canvas id="cv"></canvas>
+<div id="scan"></div>
+<div id="vig"></div>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div id="logo">DEV CITY</div>
+  <div style="display:flex;gap:16px;align-items:center;">
+    <div class="hs">POS <span class="hv" id="hud-pos">0, 0</span></div>
+    <div class="hs">SKILLS <span class="hv">7</span></div>
+    <div class="hs">ONLINE <div class="pulse"></div></div>
+  </div>
+</div>
+
+<!-- TAB BAR (switches left panel) -->
+<div id="tab-bar">
+  <button class="tab-btn on" id="tab-sb" onclick="switchTab('sidebar')">PERFIL</button>
+  <button class="tab-btn"    id="tab-mp" onclick="switchTab('map')">🗺 MAPA</button>
+</div>
+
+<!-- SIDEBAR: profile + controls -->
+<div id="sidebar" style="top:86px;">
+  <div id="avatar-wrap">
+    <div id="avatar">🧑‍💻</div>
+    <div class="av-name">FULL STACK<br>DEVELOPER</div>
+    <div class="av-title">Backend Specialist</div>
+    <div class="av-badge">LVL 42</div>
+  </div>
+
+  <div class="xp-wrap">
+    <div class="xp-top"><span>XP</span><span>8400 / 10000</span></div>
+    <div class="xp-bar"><div class="xp-fill" style="width:84%"></div></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">HABILIDADES</div>
+    <div class="sk-item active" onclick="selectSkill(this,0)">
+      <div class="sk-icon" style="background:rgba(237,100,0,.13);border:1px solid rgba(237,100,0,.35)">☕</div>
+      <div style="flex:1"><div class="sk-name">JAVA</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:92%;background:linear-gradient(90deg,#ed6400,#ff9500)"></div></div>
+      </div><div class="sk-lvl">92</div>
+    </div>
+    <div class="sk-item" onclick="selectSkill(this,1)">
+      <div class="sk-icon" style="background:rgba(109,179,63,.13);border:1px solid rgba(109,179,63,.35)">🍃</div>
+      <div style="flex:1"><div class="sk-name">SPRING</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:88%;background:linear-gradient(90deg,#6db33f,#90d35f)"></div></div>
+      </div><div class="sk-lvl">88</div>
+    </div>
+    <div class="sk-item" onclick="selectSkill(this,2)">
+      <div class="sk-icon" style="background:rgba(83,158,66,.13);border:1px solid rgba(83,158,66,.35)">⬡</div>
+      <div style="flex:1"><div class="sk-name">NODE.JS</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:80%;background:linear-gradient(90deg,#539e42,#7acc5c)"></div></div>
+      </div><div class="sk-lvl">80</div>
+    </div>
+    <div class="sk-item" onclick="selectSkill(this,3)">
+      <div class="sk-icon" style="background:rgba(228,79,38,.13);border:1px solid rgba(228,79,38,.35)">◇</div>
+      <div style="flex:1"><div class="sk-name">HTML5</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:95%;background:linear-gradient(90deg,#e44f26,#ff7849)"></div></div>
+      </div><div class="sk-lvl">95</div>
+    </div>
+    <div class="sk-item" onclick="selectSkill(this,4)">
+      <div class="sk-icon" style="background:rgba(38,77,228,.13);border:1px solid rgba(38,77,228,.35)">✦</div>
+      <div style="flex:1"><div class="sk-name">CSS3</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:90%;background:linear-gradient(90deg,#264de4,#5b7fff)"></div></div>
+      </div><div class="sk-lvl">90</div>
+    </div>
+    <div class="sk-item" onclick="selectSkill(this,5)">
+      <div class="sk-icon" style="background:rgba(255,45,120,.13);border:1px solid rgba(255,45,120,.35)">🌿</div>
+      <div style="flex:1"><div class="sk-name">GIT</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:85%;background:linear-gradient(90deg,#ff2d78,#ff6b9d)"></div></div>
+      </div><div class="sk-lvl">85</div>
+    </div>
+    <div class="sk-item" onclick="selectSkill(this,6)">
+      <div class="sk-icon" style="background:rgba(255,229,102,.1);border:1px solid rgba(255,229,102,.3)">🗄️</div>
+      <div style="flex:1"><div class="sk-name">SQL</div>
+        <div class="sk-mini"><div class="sk-mini-fill" style="width:78%;background:linear-gradient(90deg,#ffe566,#ffd700)"></div></div>
+      </div><div class="sk-lvl">78</div>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">STATUS</div>
+    <div class="stat-row"><span class="stat-k">PROJETOS</span><span class="stat-v">12</span></div>
+    <div class="stat-row"><span class="stat-k">COMMITS</span><span class="stat-v">2.4k+</span></div>
+    <div class="stat-row"><span class="stat-k">EXPERIÊNCIA</span><span class="stat-v">3+ anos</span></div>
+  </div>
+
+  <div id="ctrl-hud">
+    <div class="sb-label" style="padding:0 0 8px">CONTROLES</div>
+    <div class="ctrl-grid">
+      <div class="ck empty"></div>
+      <div class="ck" id="ck-w">W</div>
+      <div class="ck empty"></div>
+      <div class="ck" id="ck-a">A</div>
+      <div class="ck" id="ck-s">S</div>
+      <div class="ck" id="ck-d">D</div>
+    </div>
+    <div class="ctrl-note">
+      WASD → MOVER<br>
+      SHIFT → CORRER<br>
+      MOUSE → CÂMERA (clique no jogo)<br>
+      SCROLL → ZOOM<br>
+      BTN DIR → CÂMERA (sem lock)<br>
+      ESPAÇO → ENTRAR NO PRÉDIO<br>
+      ESC → LIBERAR MOUSE
+    </div>
+  </div>
+</div>
+
+<!-- MAP PANEL: isometric Three.js overhead -->
+<div id="map-panel" style="top:86px;">
+  <div id="map-canvas-wrap">
+    <canvas id="map-3d"></canvas>
+  </div>
+  <div id="map-legend">
+    <div class="ml-title">// LEGENDA</div>
+    <div id="ml-rows"></div>
+  </div>
+</div>
+
+<!-- INFO PANEL -->
+<div id="info-panel" class="hidden">
+  <div id="ip-accent"></div>
+  <button id="ip-close" onclick="closePanel()">✕</button>
+  <div id="ip-body">
+    <span id="ip-icon">🏗️</span>
+    <div id="ip-name">NAME</div>
+    <div id="ip-type">TYPE</div>
+    <div class="ip-br"><span>PROFICIÊNCIA</span><span id="ip-pct">0%</span></div>
+    <div class="ip-bar"><div class="ip-fill" id="ip-fill"></div></div>
+    <div id="ip-desc"></div>
+    <div class="ip-tags" id="ip-tags"></div>
+    <div class="ip-facts" id="ip-facts"></div>
+  </div>
+</div>
+
+<!-- PROXIMITY HINT -->
+<div id="hint" class="hidden">[ ESPAÇO ] EXPLORAR PRÉDIO</div>
+
+<!-- CAMERA MODE -->
+<div id="cam-mode">CAM: CLIQUE NO JOGO para ativar</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+const hs = h => '#' + h.toString(16).padStart(6,'0');
+const M  = (c,eI=.1,r=.75,m=.05) => new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:eI,roughness:r,metalness:m});
+function BX(w,h,d,mat){ const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat); o.castShadow=true; o.receiveShadow=true; return o; }
+function CL(rt,rb,h,s,mat){ const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,s),mat); o.castShadow=true; o.receiveShadow=true; return o; }
+function EG(m,c=0xffffff,op=.12){ m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({color:c,transparent:true,opacity:op}))); }
+
+// ═══════════════════════════════════════
+// BUILDINGS DATA
+// ═══════════════════════════════════════
+const BDATA=[
+  {id:'java', name:'JAVA FORGE',    type:'⚒️ FERRARIA',       icon:'☕', color:0xed6400,glow:0xff9500, x:-24,z:-24, hw:4.2, skill:92,
+   desc:'A Ferraria onde código robusto é forjado. Java é a base sólida — OOP, JVM e streams poderosos.',
+   tags:['OOP','JVM','STREAMS','LAMBDAS'], facts:[{l:'Versão',v:'Java 17+'},{l:'Exp.',v:'3+ anos'},{l:'Projetos',v:'8'},{l:'Rank',v:'S-TIER'}]},
+  {id:'spring',name:'SPRING CAFÉ',  type:'🍽️ RESTAURANTE',    icon:'🍃', color:0x6db33f,glow:0x90d35f, x:24, z:-24, hw:4.2, skill:88,
+   desc:'O Restaurante onde APIs são servidas quentinhas. Spring Boot cozinha microsserviços e endpoints REST de dar água na boca.',
+   tags:['BOOT','MVC','JPA','SECURITY'], facts:[{l:'Versão',v:'3.x'},{l:'Exp.',v:'2+ anos'},{l:'APIs',v:'15+'},{l:'Rank',v:'A-TIER'}]},
+  {id:'node', name:'NODE STATION',  type:'⛽ POSTO DE GASOLINA',icon:'⬡', color:0x539e42,glow:0x7acc5c, x:-24,z:24,  hw:4.5, skill:80,
+   desc:'O Posto que abastece o backend JS. Node.js turbina aplicações assíncronas e pipelines em tempo real.',
+   tags:['EXPRESS','NPM','ASYNC','REST'], facts:[{l:'Runtime',v:'Node 20'},{l:'Exp.',v:'2 anos'},{l:'Pacotes',v:'50+'},{l:'Rank',v:'A-TIER'}]},
+  {id:'html', name:'HTML TOWER',    type:'🏢 ARRANHA-CÉU',     icon:'◇', color:0xe44f26,glow:0xff7849, x:24, z:24,  hw:3.8, skill:95,
+   desc:'O Arranha-céu da cidade — estrutura semântica que sustenta tudo no desenvolvimento web.',
+   tags:['SEMÂNTICO','SEO','FORMS','CANVAS'], facts:[{l:'Versão',v:'HTML5'},{l:'Exp.',v:'4+ anos'},{l:'Sites',v:'20+'},{l:'Rank',v:'S-TIER'}]},
+  {id:'css',  name:'CSS SPA',       type:'🏨 HOTEL DE LUXO',   icon:'✦', color:0x264de4,glow:0x5b7fff, x:0,  z:-30, hw:4.5, skill:90,
+   desc:'O Hotel 5 estrelas — CSS3 transforma estrutura em arte: animações fluidas e layouts responsivos.',
+   tags:['FLEXBOX','GRID','ANIMAÇÕES','VARS'], facts:[{l:'Versão',v:'CSS3'},{l:'Exp.',v:'4 anos'},{l:'Designs',v:'30+'},{l:'Rank',v:'S-TIER'}]},
+  {id:'git',  name:'GIT BANK',      type:'🏦 BANCO CENTRAL',   icon:'🌿', color:0xff2d78,glow:0xff6b9d, x:-30,z:0,   hw:4.5, skill:85,
+   desc:'O Banco onde todo código tem valor guardado. Git controla versões e protege o histórico.',
+   tags:['COMMITS','BRANCHES','MERGE','CI/CD'], facts:[{l:'Repos',v:'40+'},{l:'Commits',v:'2.4k'},{l:'PRs',v:'120+'},{l:'Rank',v:'A-TIER'}]},
+  {id:'sql',  name:'SQL MARKET',    type:'🛒 SUPERMERCADO',    icon:'🗄️', color:0xffe566,glow:0xffd700, x:30, z:0,   hw:5.2, skill:78,
+   desc:'O Mercado onde dados são estocados e consultados. SQL organiza e relaciona dados com precisão.',
+   tags:['SELECT','JOIN','INDEX','ORM'], facts:[{l:'Bancos',v:'MySQL/PG'},{l:'Exp.',v:'3 anos'},{l:'Schemas',v:'12'},{l:'Rank',v:'A-TIER'}]},
+];
+
+// Colliders: [cx, cz, hw, hd]
+const COLLIDERS = BDATA.map(b=>[b.x, b.z, b.hw+1, b.hw+1]);
+COLLIDERS.push([-52,0,1,55],[52,0,1,55],[0,-52,55,1],[0,52,55,1]);
+
+// ═══════════════════════════════════════
+// MAIN RENDERER
+// ═══════════════════════════════════════
+const cv = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x060d1a,1);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x060d1a,.02);
+
+const camera = new THREE.PerspectiveCamera(65, innerWidth/innerHeight, .1, 300);
+
+window.addEventListener('resize',()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  if(mapRenderer){
+    const W=mapWrap.clientWidth||250, H=mapWrap.clientHeight||300;
+    mapRenderer.setSize(W,H);
+    if(mapCamera){
+      const asp=W/H;
+      mapCamera.left=-45*asp; mapCamera.right=45*asp;
+      mapCamera.updateProjectionMatrix();
+    }
+  }
+});
+
+// ═══════════════════════════════════════
+// ISO MAP RENDERER (second Three.js scene)
+// ═══════════════════════════════════════
+const mapCv   = document.getElementById('map-3d');
+const mapWrap = document.getElementById('map-canvas-wrap');
+let mapRenderer, mapScene, mapCamera, mapPlayerDot;
+let mapFrame = 0;
+
+function initMapRenderer(){
+  mapRenderer = new THREE.WebGLRenderer({canvas:mapCv, antialias:true, alpha:true});
+  mapRenderer.setClearColor(0x040c18, 1);
+  mapRenderer.setPixelRatio(Math.min(devicePixelRatio,2));
+
+  const W = mapWrap.clientWidth || 250;
+  const H = mapWrap.clientHeight || 300;
+  mapRenderer.setSize(W, H);
+  mapCv.style.width  = '100%';
+  mapCv.style.height = '100%';
+
+  mapScene = new THREE.Scene();
+  mapScene.fog = new THREE.Fog(0x040c18, 80, 160);
+
+  // Isometric-ish camera
+  const asp = W/H;
+  mapCamera = new THREE.OrthographicCamera(-45*asp, 45*asp, 45, -45, .1, 400);
+  mapCamera.position.set(60, 80, 60);
+  mapCamera.lookAt(0, 0, 0);
+
+  // Ground
+  const gnd = new THREE.Mesh(new THREE.PlaneGeometry(130,130),
+    new THREE.MeshStandardMaterial({color:0x080f18,roughness:.95}));
+  gnd.rotation.x = -Math.PI/2; mapScene.add(gnd);
+
+  // Grid
+  const gr = new THREE.GridHelper(130,26,0x0a1e10,0x081510);
+  gr.position.y=.01; mapScene.add(gr);
+
+  // Roads
+  function mRoad(x,z,w,d){
+    const r=new THREE.Mesh(new THREE.PlaneGeometry(w,d),
+      new THREE.MeshStandardMaterial({color:0x0d1520,roughness:.9}));
+    r.rotation.x=-Math.PI/2; r.position.set(x,.02,z); mapScene.add(r);
+  }
+  mRoad(0,0,130,4); mRoad(0,0,4,130);
+  mRoad(-24,0,4,130); mRoad(24,0,4,130);
+  mRoad(0,-24,130,4); mRoad(0,24,130,4);
+
+  // Mini buildings (simplified)
+  BDATA.forEach(b=>{
+    const g=new THREE.Group();
+    const bm=new THREE.MeshStandardMaterial({color:b.color,emissive:b.color,emissiveIntensity:.2,roughness:.7});
+    const base=BX(b.hw*1.6, 2.5, b.hw*1.6, bm); base.position.y=1.25; g.add(base);
+    EG(base,b.color,.5);
+    // Glow top
+    const top=new THREE.Mesh(new THREE.BoxGeometry(b.hw*1.4,.4,b.hw*1.4),
+      new THREE.MeshStandardMaterial({color:b.glow,emissive:b.glow,emissiveIntensity:1.2}));
+    top.position.y=2.7; g.add(top);
+    const pl=new THREE.PointLight(b.color,1.5,12); pl.position.y=4; g.add(pl);
+    g.position.set(b.x,.0,b.z); mapScene.add(g);
+  });
+
+  // Trees (tiny)
+  [[-8,-8],[-8,8],[8,-8],[8,8],[-14,2],[14,2],[2,-14],[2,14],
+   [-16,-16],[16,-16],[-16,16],[16,16]].forEach(([x,z])=>{
+    const t=CL(.0,.5,1.2,6,new THREE.MeshStandardMaterial({color:0x1a5c20,emissive:0x0a2010,emissiveIntensity:.1,roughness:.8}));
+    t.position.set(x,.6,z); mapScene.add(t);
+  });
+
+  // Player dot on map
+  const pdGeo = new THREE.CylinderGeometry(.8,.8,.4,12);
+  const pdMat = new THREE.MeshStandardMaterial({color:0x00ff88,emissive:0x00ff88,emissiveIntensity:2});
+  mapPlayerDot = new THREE.Mesh(pdGeo, pdMat);
+  mapPlayerDot.position.set(0,.5,8);
+  mapScene.add(mapPlayerDot);
+
+  // Player glow ring
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(1.4,.12,8,32),
+    new THREE.MeshStandardMaterial({color:0x00ff88,emissive:0x00ff88,emissiveIntensity:1.5,transparent:true,opacity:.7}));
+  ring.rotation.x=Math.PI/2; mapPlayerDot.add(ring);
+
+  // Lights
+  mapScene.add(new THREE.AmbientLight(0x112233,1.5));
+  const sun=new THREE.DirectionalLight(0x334466,2);
+  sun.position.set(-20,40,20); mapScene.add(sun);
+  const fill=new THREE.DirectionalLight(0x001133,.8);
+  fill.position.set(20,20,-20); mapScene.add(fill);
+
+  // Stars
+  const sG=new THREE.BufferGeometry(), sP=new Float32Array(1000*3);
+  for(let i=0;i<1000;i++){sP[i*3]=(Math.random()-.5)*250;sP[i*3+1]=20+Math.random()*80;sP[i*3+2]=(Math.random()-.5)*250;}
+  sG.setAttribute('position',new THREE.BufferAttribute(sP,3));
+  mapScene.add(new THREE.Points(sG,new THREE.PointsMaterial({color:0xaaccff,size:.5,transparent:true,opacity:.6})));
+
+  // Legend rows
+  const mlRows = document.getElementById('ml-rows');
+  BDATA.forEach((b,i)=>{
+    const row = document.createElement('div'); row.className='ml-row';
+    row.innerHTML=`<div class="ml-dot" style="background:${hs(b.color)};box-shadow:0 0 5px ${hs(b.color)}"></div>
+      <div class="ml-name">${b.name}</div>
+      <div class="ml-sub">${b.type.split(' ').slice(1).join(' ')}</div>`;
+    row.onclick=()=>{ teleportTo(i); };
+    mlRows.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════
+// WORLD GEOMETRY
+// ═══════════════════════════════════════
+// Ground
+const gnd = new THREE.Mesh(new THREE.PlaneGeometry(130,130),
+  new THREE.MeshStandardMaterial({color:0x090f18,roughness:.95}));
+gnd.rotation.x=-Math.PI/2; gnd.receiveShadow=true; scene.add(gnd);
+
+const grid = new THREE.GridHelper(130,28,0x0a1e10,0x081510);
+grid.position.y=.01; scene.add(grid);
+
+// Roads
+function road(x,z,w,d){
+  const r=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshStandardMaterial({color:0x0d1520,roughness:.9}));
+  r.rotation.x=-Math.PI/2; r.position.set(x,.015,z); r.receiveShadow=true; scene.add(r);
+}
+road(0,0,130,4); road(0,0,4,130);
+road(-24,0,4,130); road(24,0,4,130);
+road(0,-24,130,4); road(0,24,130,4);
+
+const dashM=new THREE.MeshStandardMaterial({color:0xffe566,emissive:0xffe566,emissiveIntensity:.2});
+for(let i=-15;i<=15;i++){
+  const d1=new THREE.Mesh(new THREE.PlaneGeometry(.15,.9),dashM); d1.rotation.x=-Math.PI/2; d1.position.set(i*4,.025,0); scene.add(d1);
+  const d2=new THREE.Mesh(new THREE.PlaneGeometry(.9,.15),dashM); d2.rotation.x=-Math.PI/2; d2.position.set(0,.025,i*4); scene.add(d2);
+}
+
+// Trees
+function tree(x,z){
+  const g=new THREE.Group();
+  const trunk=CL(.15,.18,1.2,6,M(0x3d2000,0,.9,0)); trunk.position.y=.6; g.add(trunk);
+  const l1=CL(.0,.95,1.8,6,M(0x1a5c20,.1,.8,0)); l1.position.y=2.1; g.add(l1);
+  const l2=CL(.0,.65,1.4,6,M(0x1e6b24,.15,.8,0)); l2.position.y=3.0; g.add(l2);
+  const l3=CL(.0,.35,1.0,6,M(0x22742a,.2,.8,0)); l3.position.y=3.7; g.add(l3);
+  g.position.set(x,0,z); g.castShadow=true; scene.add(g);
+}
+[[-8,-8],[-8,8],[8,-8],[8,8],[-14,2],[14,2],[2,-14],[2,14],
+ [-32,-8],[-32,8],[32,-8],[32,8],[-8,-32],[-8,32],[8,-32],[8,32],
+ [-16,-16],[16,-16],[-16,16],[16,16]].forEach(([x,z])=>tree(x,z));
+
+// Lamps
+function lamp(x,z){
+  const g=new THREE.Group();
+  const pole=CL(.06,.08,4,8,M(0x334455,.05,.6,.4)); pole.position.y=2; g.add(pole);
+  const arm=BX(.6,.1,.1,M(0x334455,.05,.6,.4)); arm.position.set(.35,4.05,0); g.add(arm);
+  const head=BX(.35,.18,.35,M(0x334455,.05,.6,.4)); head.position.set(.42,3.93,0); g.add(head);
+  const bulb=new THREE.Mesh(new THREE.SphereGeometry(.1,8,8),new THREE.MeshStandardMaterial({color:0xffe566,emissive:0xffe566,emissiveIntensity:2.5}));
+  bulb.position.set(.42,3.8,0); g.add(bulb);
+  const pl=new THREE.PointLight(0xffe566,.7,9); pl.position.set(.42,3.6,0); g.add(pl);
+  g.position.set(x,0,z); scene.add(g);
+}
+[[-5,-5],[-5,5],[5,-5],[5,5],[-17,-5],[-17,5],[17,-5],[17,5],
+ [-5,-17],[-5,17],[5,-17],[5,17],[-29,-5],[-29,5],[29,-5],[29,5]].forEach(([x,z])=>lamp(x,z));
+
+// ═══════════════════════════════════════
+// BUILDINGS
+// ═══════════════════════════════════════
+function buildJavaForge(b){
+  const g=new THREE.Group(),c=b.color;
+  const base=BX(7,3,7,M(0x1a0a00,.08,.8,.2)); base.position.y=1.5; EG(base,c,.3); g.add(base);
+  const roof=BX(7.5,.5,7.5,M(c,.2,.6,.5)); roof.position.y=3.25; g.add(roof);
+  [[1.5,3,-1.5],[2.8,3.5,1.5],[-1.5,4,1]].forEach(([x,h,z])=>{
+    const ch=CL(.35,.4,h,8,M(0x222222,.05,.9,.1)); ch.position.set(x,3+h/2,z); g.add(ch);
+    const gm=new THREE.Mesh(new THREE.SphereGeometry(.3,8,8),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2}));
+    gm.position.set(x,3+h+.1,z); g.add(gm);
+  });
+  [[2.2,2,3.6],[0,2,3.6],[-2.2,2,3.6],[2.2,2,-3.6],[-2.2,2,-3.6]].forEach(([x,y,z])=>{
+    const w=BX(.8,.9,.08,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1.1})); w.position.set(x,y,z); g.add(w);
+  });
+  const pl=new THREE.PointLight(c,2,14); pl.position.set(0,4,0); g.add(pl);
+  const sign=BX(3,.5,.08,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1.5})); sign.position.set(0,3.65,3.8); g.add(sign);
+  return g;
+}
+function buildSpringCafe(b){
+  const g=new THREE.Group(),c=b.color;
+  const terrace=BX(9,3,9,M(0x0a1a08,.06,.8,.05)); terrace.position.y=1.5; EG(terrace,c,.2); g.add(terrace);
+  const base=BX(7,4,7,M(0x0a1a08,.1,.75,.05)); base.position.y=3.5; EG(base,c,.3); g.add(base);
+  const roof=new THREE.Mesh(new THREE.ConeGeometry(5.5,2,4),M(c,.25,.6,.1)); roof.position.y=6.0; roof.rotation.y=Math.PI/4; EG(roof,c,.3); g.add(roof);
+  [[-2.5,3.1,-2.5],[2.5,3.1,-2.5],[-2.5,3.1,2.5],[2.5,3.1,2.5]].forEach(([x,y,z])=>{
+    const um=CL(1.4,1.4,.1,6,M(c,.3,.7,0)); um.position.set(x,y,z); g.add(um);
+    const pole=CL(.06,.06,1.1,6,M(0x888888,.1,.6,.4)); pole.position.set(x,y-.55,z); g.add(pole);
+  });
+  const sign=BX(2,.4,.06,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2})); sign.position.set(0,5.9,3.8); g.add(sign);
+  const pl=new THREE.PointLight(c,1.8,14); pl.position.set(0,4,0); g.add(pl);
+  return g;
+}
+function buildNodeStation(b){
+  const g=new THREE.Group(),c=b.color;
+  const canopy=BX(13,.3,9,M(c,.2,.6,.3)); canopy.position.y=4; EG(canopy,c,.4); g.add(canopy);
+  [[-4.5,2,3.5],[4.5,2,3.5],[-4.5,2,-3.5],[4.5,2,-3.5]].forEach(([x,y,z])=>{
+    const p=CL(.2,.2,y*2,8,M(0x334433,.1,.7,.3)); p.position.set(x,y,z); g.add(p);
+  });
+  const store=BX(5,3.5,5,M(0x0a180a,.1,.8,.05)); store.position.set(-3.5,1.75,0); EG(store,c,.25); g.add(store);
+  [[2.5,1,1.8],[2.5,1,-1.8],[5.5,1,1.8],[5.5,1,-1.8]].forEach(([x,y,z])=>{
+    const pump=BX(.65,2,.65,M(0x223322,.1,.7,.2)); pump.position.set(x,y,z); EG(pump,c,.5); g.add(pump);
+    const sc=BX(.42,.62,.05,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1.6})); sc.position.set(x,1.82,z+.38); g.add(sc);
+  });
+  const bigSign=BX(4,.65,.08,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2})); bigSign.position.set(0,4.1,4.6); g.add(bigSign);
+  const pl=new THREE.PointLight(c,2,18); pl.position.set(3,3,0); g.add(pl);
+  return g;
+}
+function buildHtmlTower(b){
+  const g=new THREE.Group(),c=b.color;
+  [[7,4,7,2],[6,5,6,6.5],[5,5,5,11.5],[4,4.5,4,16.3],[3,4,3,20.8]].forEach(([w,h,d,y])=>{
+    const fl=BX(w,h,d,M(0x0d0808,.08,.7,.2)); fl.position.y=y; EG(fl,c,.3); g.add(fl);
+    const rows=Math.floor(h/1.2),cols=Math.floor(w/1.4);
+    for(let r=0;r<rows;r++) for(let col=0;col<cols;col++){
+      if(Math.random()<.25) continue;
+      const lit=Math.random()<.75;
+      const win=BX(.42,.52,.04,new THREE.MeshStandardMaterial({color:lit?c:0x221100,emissive:lit?c:0,emissiveIntensity:lit?.8:0,transparent:true,opacity:.9}));
+      win.position.set(-w/2+.7+col*1.3+.3,y-h/2+.8+r*1.1,.4+d/2); g.add(win);
+    }
+  });
+  const ant=CL(.04,.1,3,8,M(c,.5,.5,.8)); ant.position.y=23.3; g.add(ant);
+  const tip=new THREE.Mesh(new THREE.SphereGeometry(.13,8,8),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:3})); tip.position.y=24.85; g.add(tip);
+  const pl=new THREE.PointLight(c,3,22); pl.position.set(0,12,0); g.add(pl);
+  return g;
+}
+function buildCssSpa(b){
+  const g=new THREE.Group(),c=b.color;
+  const main=BX(9,5,7,M(0x040818,.08,.65,.15)); main.position.y=2.5; EG(main,c,.25); g.add(main);
+  const top=BX(9.5,1.5,7.5,M(c,.18,.6,.3)); top.position.y=5.75; EG(top,c,.4); g.add(top);
+  const pool=BX(6,.3,4,M(0x001133,.15,.4,.3)); pool.position.set(0,6.75,-1); g.add(pool);
+  const water=new THREE.Mesh(new THREE.PlaneGeometry(5.4,3.4),new THREE.MeshStandardMaterial({color:0x0066ff,emissive:0x002299,emissiveIntensity:.9,transparent:true,opacity:.75}));
+  water.rotation.x=-Math.PI/2; water.position.set(0,6.82,-1); g.add(water);
+  [-3,-1,1,3].forEach(x=>{ const col=CL(.22,.22,4.8,8,M(0xccccff,.05,.4,.3)); col.position.set(x,0,3.6); g.add(col); });
+  const awn=BX(4.5,.15,1.5,M(c,.3,.6,.2)); awn.position.set(0,3.5,4.4); g.add(awn);
+  for(let f=0;f<3;f++) for(let w=0;w<4;w++){
+    const win=BX(.9,1.4,.04,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.6,transparent:true,opacity:.5}));
+    win.position.set(-3.3+w*2.2,.8+f*1.5,3.61); g.add(win);
+  }
+  const pl=new THREE.PointLight(c,2,20); pl.position.set(0,5,0); g.add(pl);
+  const plPool=new THREE.PointLight(0x0066ff,1.5,8); plPool.position.set(0,6.5,-1); g.add(plPool);
+  return g;
+}
+function buildGitBank(b){
+  const g=new THREE.Group(),c=b.color;
+  const base=BX(9,5,8,M(0x0a0010,.08,.7,.2)); base.position.y=2.5; EG(base,c,.3); g.add(base);
+  const dome=new THREE.Mesh(new THREE.SphereGeometry(3,16,8,0,Math.PI*2,0,Math.PI/2),M(c,.2,.5,.4)); dome.position.y=5.1; EG(dome,c,.35); g.add(dome);
+  for(let i=0;i<5;i++){ const col=CL(.22,.22,4.8,8,M(0xddccee,.04,.4,.2)); col.position.set(-4+i*2,0,4.2); g.add(col); }
+  [0,.2,.4].forEach((h,i)=>{ const s=BX(8+i*.5,.2,1,M(0x1a0028,.04,.85,.1)); s.position.set(0,h,3.5+i*.3); g.add(s); });
+  const vo=new THREE.Mesh(new THREE.TorusGeometry(.8,.12,8,32),M(c,.4,.5,.8)); vo.position.set(0,2.5,4.15); g.add(vo);
+  const pl=new THREE.PointLight(c,2.5,18); pl.position.set(0,5,0); g.add(pl);
+  return g;
+}
+function buildSqlMarket(b){
+  const g=new THREE.Group(),c=b.color;
+  const main=BX(10,4,8,M(0x14120a,.1,.8,.05)); main.position.y=2; EG(main,c,.25); g.add(main);
+  const facade=BX(10.5,1.5,1,M(c,.2,.6,.1)); facade.position.set(0,4.75,4.1); g.add(facade);
+  const entrG=new THREE.Mesh(new THREE.PlaneGeometry(3.2,3.2),new THREE.MeshStandardMaterial({color:0xffffff,emissive:0xffee88,emissiveIntensity:.3,transparent:true,opacity:.35})); entrG.position.set(0,1.6,4.06); g.add(entrG);
+  for(let i=0;i<3;i++){ const cart=BX(.5,.4,.35,M(0x555555,.05,.7,.4)); cart.position.set(3.5+i*.7,.2,4.5); g.add(cart); }
+  [[-3.5,2,4.06],[-1.5,2,4.06],[1.5,2,4.06],[3.5,2,4.06]].forEach(([x,y,z])=>{
+    const disp=BX(1.2,1.5,.02,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:.9,transparent:true,opacity:.8})); disp.position.set(x,y,z); g.add(disp);
+  });
+  const bigSign=BX(5,.8,.08,new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2})); bigSign.position.set(0,4.8,4.07); g.add(bigSign);
+  const pl=new THREE.PointLight(c,1.8,16); pl.position.set(0,3,0); g.add(pl);
+  return g;
+}
+
+const BUILDERS=[buildJavaForge,buildSpringCafe,buildNodeStation,buildHtmlTower,buildCssSpa,buildGitBank,buildSqlMarket];
+BDATA.forEach((b,i)=>{
+  const g=BUILDERS[i](b); g.position.set(b.x,0,b.z); g.userData={bldIndex:i}; scene.add(g);
+});
+
+// ═══════════════════════════════════════
+// LIGHTS
+// ═══════════════════════════════════════
+scene.add(new THREE.AmbientLight(0x112233,1.3));
+const sun=new THREE.DirectionalLight(0x334466,1.8);
+sun.position.set(-20,40,20); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-70; sun.shadow.camera.right=70;
+sun.shadow.camera.top=70; sun.shadow.camera.bottom=-70;
+sun.shadow.camera.near=1; sun.shadow.camera.far=200;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0x001133,.7); fill.position.set(20,20,-20); scene.add(fill);
+
+const sGeo=new THREE.BufferGeometry(),sPts=new Float32Array(2000*3);
+for(let i=0;i<2000;i++){sPts[i*3]=(Math.random()-.5)*300;sPts[i*3+1]=20+Math.random()*100;sPts[i*3+2]=(Math.random()-.5)*300;}
+sGeo.setAttribute('position',new THREE.BufferAttribute(sPts,3));
+scene.add(new THREE.Points(sGeo,new THREE.PointsMaterial({color:0xaaccff,size:.4,transparent:true,opacity:.7})));
+
+const dGeo=new THREE.BufferGeometry(),dPos=new Float32Array(200*3),dCol=new Float32Array(200*3);
+const dVel=[];
+for(let i=0;i<200;i++){
+  dPos[i*3]=(Math.random()-.5)*80; dPos[i*3+1]=Math.random()*15; dPos[i*3+2]=(Math.random()-.5)*80;
+  const t=Math.random();
+  if(t<.35){dCol[i*3]=0;dCol[i*3+1]=1;dCol[i*3+2]=.53;}
+  else if(t<.7){dCol[i*3]=0;dCol[i*3+1]=.83;dCol[i*3+2]=1;}
+  else{dCol[i*3]=1;dCol[i*3+1]=.49;dCol[i*3+2]=.16;}
+  dVel.push({vy:.02+Math.random()*.025,maxY:3+Math.random()*14});
+}
+dGeo.setAttribute('position',new THREE.BufferAttribute(dPos,3));
+dGeo.setAttribute('color',new THREE.BufferAttribute(dCol,3));
+const dataParts=new THREE.Points(dGeo,new THREE.PointsMaterial({size:.22,vertexColors:true,transparent:true,opacity:.75}));
+scene.add(dataParts);
+
+// ═══════════════════════════════════════
+// PLAYER
+// ═══════════════════════════════════════
+const PG = new THREE.Group();
+
+const bodyMat =new THREE.MeshStandardMaterial({color:0x00ff88,emissive:0x00ff88,emissiveIntensity:.3,roughness:.6});
+const headMat =new THREE.MeshStandardMaterial({color:0xffd0a0,roughness:.7});
+const limbMat =new THREE.MeshStandardMaterial({color:0x003355,emissive:0x001122,emissiveIntensity:.15,roughness:.6});
+const shoesMat=new THREE.MeshStandardMaterial({color:0x111111,roughness:.8});
+const eyeMat  =new THREE.MeshStandardMaterial({color:0x000000,roughness:.5});
+
+const head=BX(.5,.5,.5,headMat); head.position.y=1.7; PG.add(head);
+const eye1=BX(.1,.1,.06,eyeMat); eye1.position.set(.12,1.75,.26); PG.add(eye1);
+const eye2=BX(.1,.1,.06,eyeMat); eye2.position.set(-.12,1.75,.26); PG.add(eye2);
+const body=BX(.6,.7,.35,bodyMat); body.position.y=1.1; PG.add(body);
+const belt=BX(.62,.1,.37,new THREE.MeshStandardMaterial({color:0xffaa00,emissive:0xffaa00,emissiveIntensity:.5,roughness:.5})); belt.position.y=.8; PG.add(belt);
+const armL=BX(.22,.6,.22,limbMat); armL.position.set(.42,1.1,0); PG.add(armL);
+const armR=BX(.22,.6,.22,limbMat); armR.position.set(-.42,1.1,0); PG.add(armR);
+const legL=BX(.25,.7,.25,limbMat); legL.position.set(.16,.35,0); PG.add(legL);
+const legR=BX(.25,.7,.25,limbMat); legR.position.set(-.16,.35,0); PG.add(legR);
+const shoeL=BX(.27,.14,.32,shoesMat); shoeL.position.set(.16,.01,.04); PG.add(shoeL);
+const shoeR=BX(.27,.14,.32,shoesMat); shoeR.position.set(-.16,.01,.04); PG.add(shoeR);
+const glow=new THREE.Mesh(new THREE.TorusGeometry(.4,.05,8,32),new THREE.MeshStandardMaterial({color:0x00ff88,emissive:0x00ff88,emissiveIntensity:2,transparent:true,opacity:.7}));
+glow.rotation.x=Math.PI/2; glow.position.y=.05; PG.add(glow);
+const shadow=new THREE.Mesh(new THREE.CircleGeometry(.45,16),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.3}));
+shadow.rotation.x=-Math.PI/2; shadow.position.y=.01; PG.add(shadow);
+
+PG.position.set(0,0,8);
+scene.add(PG);
+const pLight=new THREE.PointLight(0x00ff88,1.5,7); PG.add(pLight);
+
+// ═══════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════
+const K={};
+const keyMap={'KeyW':'ck-w','KeyS':'ck-s','KeyA':'ck-a','KeyD':'ck-d'};
+document.addEventListener('keydown',e=>{
+  K[e.code]=true;
+  if(keyMap[e.code]) document.getElementById(keyMap[e.code])?.classList.add('lit');
+  if(e.code==='Space'){ e.preventDefault(); tryEnter(); }
+  if(e.code==='Escape'){ closePanel(); exitPointerLock(); }
+});
+document.addEventListener('keyup',e=>{
+  K[e.code]=false;
+  if(keyMap[e.code]) document.getElementById(keyMap[e.code])?.classList.remove('lit');
+});
+
+// ═══════════════════════════════════════
+// GTA-STYLE CAMERA  (Pointer Lock)
+// ═══════════════════════════════════════
+// camYaw  = ângulo horizontal da câmera (independente do personagem)
+// camPitch= ângulo vertical
+// camDist = distância atrás do personagem
+let camYaw   = Math.PI;
+let camPitch = 0.32;        // ~18° acima do horizonte — vista GTA
+let camDist  = 10;
+let tDist    = 10;
+
+let pointerLocked = false;
+
+// ── Pointer Lock ──
+function requestPointerLock(){
+  cv.requestPointerLock = cv.requestPointerLock||cv.mozRequestPointerLock||cv.webkitRequestPointerLock;
+  if(cv.requestPointerLock) cv.requestPointerLock();
+}
+function exitPointerLock(){
+  document.exitPointerLock = document.exitPointerLock||document.mozExitPointerLock||document.webkitExitPointerLock;
+  if(document.exitPointerLock) document.exitPointerLock();
+}
+
+document.addEventListener('pointerlockchange', ()=>{
+  pointerLocked = document.pointerLockElement===cv ||
+                  document.mozPointerLockElement===cv ||
+                  document.webkitPointerLockElement===cv;
+  document.getElementById('cam-mode').textContent =
+    pointerLocked ? 'CAM: GTA 🔒 MOUSE (ESC sair)' : 'CAM: CLIQUE NO JOGO para ativar';
+  document.getElementById('cam-mode').style.color = pointerLocked ? 'var(--green)' : 'rgba(0,212,255,.5)';
+});
+
+// Click canvas → lock mouse
+cv.addEventListener('click', ()=>{
+  if(!pointerLocked) requestPointerLock();
+});
+cv.addEventListener('contextmenu', e=>e.preventDefault());
+
+// Mouse move → rotate camera only when locked
+document.addEventListener('mousemove', e=>{
+  if(!pointerLocked) return;
+  const sens = 0.0022;
+  camYaw   -= e.movementX * sens;
+  camPitch -= e.movementY * sens;
+  // Clamp pitch: não pode virar de cabeça pra baixo nem olhar muito pra baixo
+  camPitch = Math.max(0.08, Math.min(0.75, camPitch));
+});
+
+// Scroll = zoom
+cv.addEventListener('wheel', e=>{
+  tDist = Math.max(4, Math.min(20, tDist + e.deltaY * 0.02));
+},{passive:true});
+
+// ── Fallback: segurar botão direito para quem não quer pointer lock ──
+let rmb=false, rmLastX=0, rmLastY=0;
+cv.addEventListener('mousedown', e=>{ if(e.button===2){ rmb=true; rmLastX=e.clientX; rmLastY=e.clientY; }});
+window.addEventListener('mouseup',  e=>{ if(e.button===2) rmb=false; });
+window.addEventListener('mousemove', e=>{
+  if(!rmb || pointerLocked) return;
+  camYaw   -= (e.clientX-rmLastX) * 0.005;
+  camPitch -= (e.clientY-rmLastY) * 0.004;
+  camPitch  = Math.max(0.08, Math.min(0.75, camPitch));
+  rmLastX=e.clientX; rmLastY=e.clientY;
+});
+
+// ═══════════════════════════════════════
+// MOVEMENT
+// ═══════════════════════════════════════
+let walkF=0, isWalking=false, isRunning=false;
+let vx=0, vz=0;
+// No GTA o personagem SEMPRE aponta na direção da câmera quando anda
+let playerYaw = Math.PI; // rotação atual do boneco
+
+function collides(nx,nz){
+  for(const [cx,cz,hw,hd] of COLLIDERS)
+    if(nx>cx-hw&&nx<cx+hw&&nz>cz-hd&&nz<cz+hd) return true;
+  return false;
+}
+
+// ═══════════════════════════════════════
+// PROXIMITY / PANEL
+// ═══════════════════════════════════════
+let nearBld=-1;
+function checkProx(){
+  const px=PG.position.x, pz=PG.position.z;
+  let best=-1, bestD=Infinity;
+  BDATA.forEach((b,i)=>{ const d=Math.hypot(px-b.x,pz-b.z); if(d<11&&d<bestD){bestD=d;best=i;} });
+  nearBld=best;
+  const hint=document.getElementById('hint');
+  if(best>=0){ hint.textContent=`[ ESPAÇO ] ENTRAR: ${BDATA[best].name}`; hint.classList.remove('hidden'); }
+  else hint.classList.add('hidden');
+}
+
+function tryEnter(){ if(nearBld>=0) showPanel(nearBld); }
+
+function showPanel(idx){
+  const b=BDATA[idx];
+  const cs=hs(b.color);
+  document.getElementById('ip-accent').style.background=cs;
+  document.getElementById('ip-icon').textContent=b.icon;
+  document.getElementById('ip-name').style.color=cs;
+  document.getElementById('ip-name').textContent=b.name;
+  document.getElementById('ip-type').textContent=b.type;
+  document.getElementById('ip-pct').textContent=b.skill+'%';
+  document.getElementById('ip-pct').style.color=cs;
+  const fill=document.getElementById('ip-fill');
+  fill.style.width='0%';
+  fill.style.background=`linear-gradient(90deg,${cs},${hs(b.glow)})`;
+  fill.style.boxShadow=`0 0 10px ${cs}`;
+  setTimeout(()=>fill.style.width=b.skill+'%',60);
+  document.getElementById('ip-desc').textContent=b.desc;
+  const te=document.getElementById('ip-tags'); te.innerHTML='';
+  b.tags.forEach(t=>{ const s=document.createElement('span'); s.className='iptag'; s.style.borderColor=cs+'55'; s.style.color=cs; s.textContent=t; te.appendChild(s); });
+  const fe=document.getElementById('ip-facts'); fe.innerHTML='';
+  b.facts.forEach(f=>{ const d=document.createElement('div'); d.className='ipfact'; d.innerHTML=`<div class="ipfl">${f.l}</div><div class="ipfv" style="color:${cs}">${f.v}</div>`; fe.appendChild(d); });
+  document.getElementById('info-panel').classList.remove('hidden');
+  // libera pointer lock para clicar no painel
+  exitPointerLock();
+  document.querySelectorAll('.sk-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
+}
+function closePanel(){ document.getElementById('info-panel').classList.add('hidden'); }
+
+function selectSkill(el,i){ document.querySelectorAll('.sk-item').forEach(e=>e.classList.remove('active')); el.classList.add('active'); teleportTo(i); }
+
+function teleportTo(i){
+  const b=BDATA[i];
+  PG.position.set(b.x, 0, b.z+9);
+  vx=0; vz=0;
+  showPanel(i);
+  toast(`📍 Teleportado para ${b.name}`);
+}
+
+// ═══════════════════════════════════════
+// TAB SWITCHER
+// ═══════════════════════════════════════
+function switchTab(which){
+  document.getElementById('tab-sb').classList.toggle('on', which==='sidebar');
+  document.getElementById('tab-mp').classList.toggle('on', which==='map');
+  document.body.className = which==='sidebar' ? 'show-sidebar' : 'show-map';
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ═══════════════════════════════════════
+// CROSSHAIR (ponto central, estilo GTA)
+// ═══════════════════════════════════════
+const crosshair = document.createElement('div');
+crosshair.style.cssText=`position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:14px;height:14px;pointer-events:none;z-index:55;opacity:0;transition:opacity .3s;`;
+crosshair.innerHTML=`<svg width="14" height="14" viewBox="0 0 14 14">
+  <line x1="7" y1="0" x2="7" y2="5" stroke="#00ff88" stroke-width="1.5" opacity=".8"/>
+  <line x1="7" y1="9" x2="7" y2="14" stroke="#00ff88" stroke-width="1.5" opacity=".8"/>
+  <line x1="0" y1="7" x2="5" y2="7" stroke="#00ff88" stroke-width="1.5" opacity=".8"/>
+  <line x1="9" y1="7" x2="14" y2="7" stroke="#00ff88" stroke-width="1.5" opacity=".8"/>
+  <circle cx="7" cy="7" r="1.5" fill="#00ff88" opacity=".9"/>
+</svg>`;
+document.body.appendChild(crosshair);
+document.addEventListener('pointerlockchange',()=>{
+  crosshair.style.opacity = pointerLocked ? '1' : '0';
+});
+
+// ═══════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════
+const clock=new THREE.Clock();
+let frame=0;
+// Camera position suavizada (sem jitter)
+let smoothCamX=0, smoothCamY=8, smoothCamZ=10;
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=Math.min(clock.getDelta(),.05);
+  frame++;
+
+  // ── Zoom suave ──
+  camDist += (tDist-camDist)*.08;
+
+  // ── Player move (estilo GTA: W=frente da câmera, A/D=lados, S=trás) ──
+  const spd = K['ShiftLeft']||K['ShiftRight'] ? 10 : 6.5;
+  isRunning = K['ShiftLeft']||K['ShiftRight'];
+
+  // direção frontal = onde a câmera aponta no chão
+  const fwdX = Math.sin(camYaw);
+  const fwdZ = Math.cos(camYaw);
+  const rgtX = Math.sin(camYaw + Math.PI/2);
+  const rgtZ = Math.cos(camYaw + Math.PI/2);
+
+  let mx=0, mz=0;
+  if(K['KeyW']||K['ArrowUp'])    { mx += fwdX; mz += fwdZ; }
+  if(K['KeyS']||K['ArrowDown'])  { mx -= fwdX; mz -= fwdZ; }
+  if(K['KeyA']||K['ArrowLeft'])  { mx -= rgtX; mz -= rgtZ; }
+  if(K['KeyD']||K['ArrowRight']) { mx += rgtX; mz += rgtZ; }
+
+  const len=Math.sqrt(mx*mx+mz*mz);
+  if(len>0){
+    mx=mx/len*spd*dt; mz=mz/len*spd*dt;
+    isWalking=true;
+    // personagem aponta na direção do movimento (como GTA)
+    const targetYaw = Math.atan2(mx, mz);
+    let diff = targetYaw - playerYaw;
+    while(diff> Math.PI) diff-=Math.PI*2;
+    while(diff<-Math.PI) diff+=Math.PI*2;
+    playerYaw += diff * 0.18;
+    PG.rotation.y = playerYaw;
+  } else {
+    isWalking=false;
+    mx=0; mz=0;
+  }
+
+  // Aceleração suave
+  const acc = isWalking ? 0.2 : 0.12;
+  vx += (mx-vx)*acc;
+  vz += (mz-vz)*acc;
+
+  // Colisão separada por eixo
+  const nx=PG.position.x+vx, nz=PG.position.z+vz;
+  if(!collides(nx, PG.position.z)) PG.position.x=Math.max(-50,Math.min(50,nx));
+  if(!collides(PG.position.x, nz)) PG.position.z=Math.max(-50,Math.min(50,nz));
+
+  // ── Walk/Run animation ──
+  const animSpeed = isRunning ? 14 : 8;
+  if(isWalking) walkF+=dt*animSpeed;
+  const ws=Math.sin(walkF);
+  const legAmp = isRunning ? 0.75 : 0.5;
+  const armAmp = isRunning ? 0.65 : 0.45;
+  legL.rotation.x=isWalking?ws*legAmp:legL.rotation.x*0.85;
+  legR.rotation.x=isWalking?-ws*legAmp:legR.rotation.x*0.85;
+  armL.rotation.x=isWalking?-ws*armAmp:armL.rotation.x*0.85;
+  armR.rotation.x=isWalking?ws*armAmp:armR.rotation.x*0.85;
+  const bobH = isRunning ? 0.1 : 0.05;
+  PG.position.y=isWalking?Math.abs(Math.sin(walkF))*bobH:PG.position.y*0.85;
+  head.position.y=1.7+(isWalking?Math.abs(Math.sin(walkF))*(bobH*.6):0);
+  glow.material.opacity=.35+Math.sin(Date.now()*.003)*.3;
+  pLight.intensity=1.2+Math.sin(Date.now()*.004)*.4;
+
+  // ── GTA CAMERA ──
+  // A câmera fica atrás e acima do personagem, na direção camYaw
+  // Offset atrás: negativo da direção da câmera
+  const behindX = -Math.sin(camYaw) * camDist * Math.sin(camPitch);
+  const behindZ = -Math.cos(camYaw) * camDist * Math.sin(camPitch);
+  const behindY = camDist * Math.cos(camPitch) + 1.2;
+
+  const targetCamX = PG.position.x + behindX;
+  const targetCamY = PG.position.y + behindY;
+  const targetCamZ = PG.position.z + behindZ;
+
+  // Suavização da câmera (sem jitter, segue fluido)
+  const camSmooth = 0.12;
+  smoothCamX += (targetCamX - smoothCamX) * camSmooth;
+  smoothCamY += (targetCamY - smoothCamY) * camSmooth;
+  smoothCamZ += (targetCamZ - smoothCamZ) * camSmooth;
+
+  camera.position.set(smoothCamX, smoothCamY, smoothCamZ);
+
+  // LookAt: ponto levemente à frente do personagem (não no centro, cria perspectiva cinematográfica)
+  const lookAheadX = PG.position.x + Math.sin(camYaw)*1.5;
+  const lookAheadZ = PG.position.z + Math.cos(camYaw)*1.5;
+  camera.lookAt(lookAheadX, PG.position.y+1.1, lookAheadZ);
+
+  // ── HUD ──
+  document.getElementById('hud-pos').textContent=`${Math.round(PG.position.x)}, ${Math.round(PG.position.z)}`;
+
+  // ── Proximity ──
+  if(frame%18===0) checkProx();
+
+  // ── Data particles ──
+  const dp=dataParts.geometry.attributes.position.array;
+  for(let i=0;i<200;i++){ dp[i*3+1]+=dVel[i].vy; if(dp[i*3+1]>dVel[i].maxY){dp[i*3]=(Math.random()-.5)*80;dp[i*3+1]=0;dp[i*3+2]=(Math.random()-.5)*80;} }
+  dataParts.geometry.attributes.position.needsUpdate=true;
+
+  // ── Main render ──
+  renderer.render(scene,camera);
+
+  // ── Iso map render ──
+  if(mapRenderer && frame%2===0){
+    // Sync player dot position safely
+    if(mapPlayerDot){
+      mapPlayerDot.position.set(PG.position.x, 0.5, PG.position.z);
+      mapPlayerDot.rotation.y = PG.rotation.y;
+      mapPlayerDot.material.emissiveIntensity = 1.5+Math.sin(Date.now()*.006);
+    }
+    // Rotate iso camera gently using safe .set()
+    const mAngle = Date.now()*.00015;
+    mapCamera.position.set(
+      Math.sin(mAngle)*55,
+      80,
+      Math.cos(mAngle)*55
+    );
+    mapCamera.lookAt(0,0,0);
+    mapCamera.updateProjectionMatrix();
+    mapRenderer.render(mapScene, mapCamera);
+  }
+}
+animate();
+
+// ═══════════════════════════════════════
+// LOADING
+// ═══════════════════════════════════════
+const steps=['Gerando terreno...','Construindo prédios...','Instalando iluminação...','Criando personagem...','Inicializando mapa...','Abrindo portões...'];
+let si=0;
+const stInt=setInterval(()=>{ if(si<steps.length)document.getElementById('ldstep').textContent=steps[si++]; else clearInterval(stInt); },430);
+
+setTimeout(()=>{
+  initMapRenderer();
+  document.getElementById('loading').classList.add('out');
+  setTimeout(()=>document.getElementById('loading').style.display='none',700);
+  toast('🕹️  CLIQUE NO JOGO para ativar câmera GTA  |  WASD andar  |  SHIFT correr  |  ESPAÇO explorar');
+},2800);
+</script>
 </body>
 </html>
